@@ -13,13 +13,13 @@ npx tsc --noEmit # 타입 체크만 실행
 
 ## Obsidian에서 테스트
 
-1. `main.js`와 `manifest.json`을 `.obsidian/plugins/infolearn-pro/`에 복사
+1. `main.js`와 `manifest.json`을 `.obsidian/plugins/star-infolearn/`에 복사
 2. Obsidian 새로고침 (Ctrl+R / Cmd+R)
 3. 설정 > 커뮤니티 플러그인에서 활성화
 
 ## 아키텍처 개요
 
-InfoLearn Pro는 3가지 학습 모드를 제공하는 Obsidian 플러그인입니다:
+Star InfoLearn는 3가지 학습 모드를 제공하는 Obsidian 플러그인입니다:
 - **Blanking**: AI 기반 빈칸 채우기 학습
 - **Rewriting**: 6가지 스타일의 콘텐츠 재작성
 - **Association**: 개념 간 지식 그래프 구축
@@ -55,7 +55,7 @@ src/types/ (TypeScript 인터페이스)
 |--------|----------|-----------|
 | OpenAI | Bearer 토큰 | `/v1/chat/completions` |
 | Anthropic | x-api-key 헤더 | `/v1/messages` |
-| Gemini | URL 쿼리 파라미터 | `/chat/completions?key=` |
+| Gemini | Bearer 토큰 | `/chat/completions` |
 | Grok | Bearer 토큰 | `/v1/chat/completions` |
 | Zhipu | Bearer 토큰 | `/chat/completions` |
 

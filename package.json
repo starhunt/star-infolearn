@@ -1,7 +1,7 @@
 {
-  "name": "infolearn-pro",
+  "name": "star-infolearn",
   "version": "1.0.0",
-  "description": "InfoLearn Pro - Advanced Infographic Learning Tool for Obsidian",
+  "description": "Star InfoLearn - Advanced Infographic Learning Tool for Obsidian",
   "main": "main.js",
   "types": "main.d.ts",
   "scripts": {

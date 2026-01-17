@@ -8,15 +8,20 @@ import { RewritingView } from './RewritingView';
 import { AssociationView } from './AssociationView';
 import { AISettingsPanel } from './AISettingsPanel';
 import { useAppStore } from '../store/appStore';
+import { AIProvider, AIProviderConfig } from '../types/ai';
+import { BlankItem, BlankingResult } from '../types/blanking';
+import { RewritingStyle } from '../types/rewriting';
+import { AssociationLinkItem } from '../types/association';
 import '../styles/main.css';
 
 interface MainContainerProps {
-  onRewrite: (text: string, style: string) => Promise<string>;
-  onIdentifyKeywords: (text: string) => Promise<any[]>;
-  onCreateAssociation: (link: any) => Promise<void>;
+  onRewrite: (text: string, style: RewritingStyle) => Promise<string>;
+  onIdentifyKeywords: (text: string) => Promise<BlankItem[]>;
+  onCreateAssociation: (link: Partial<AssociationLinkItem>) => Promise<void>;
   onDeleteAssociation: (linkId: string) => Promise<void>;
-  onUpdateAIProvider: (provider: string, config: any) => Promise<void>;
-  onTestAIConnection: (provider: string) => Promise<boolean>;
+  onUpdateAIProvider: (provider: AIProvider, config: Partial<AIProviderConfig>) => Promise<void>;
+  onTestAIConnection: (provider: AIProvider) => Promise<boolean>;
+  onSetDefaultProvider: (provider: AIProvider) => Promise<void>;
 }
 
 export const MainContainer: React.FC<MainContainerProps> = ({
@@ -26,10 +31,12 @@ export const MainContainer: React.FC<MainContainerProps> = ({
   onDeleteAssociation,
   onUpdateAIProvider,
   onTestAIConnection,
+  onSetDefaultProvider,
 }) => {
   const [currentMode, setCurrentMode] = useState<'blanking' | 'rewriting' | 'association' | 'settings' | null>(null);
   const [selectedText, setSelectedText] = useState('');
-  const [associationLinks, setAssociationLinks] = useState<any[]>([]);
+  const [blanks, setBlanks] = useState<BlankItem[]>([]);
+  const [associationLinks, setAssociationLinks] = useState<AssociationLinkItem[]>([]);
   const appStore = useAppStore();
 
   useEffect(() => {
@@ -50,7 +57,7 @@ export const MainContainer: React.FC<MainContainerProps> = ({
       {/* Header */}
       <div className="main-header">
         <div className="header-left">
-          <h1 className="app-title">📚 InfoLearn Pro</h1>
+          <h1 className="app-title">📚 Star InfoLearn</h1>
           <p className="app-subtitle">Advanced Infographic Learning Tool</p>
         </div>
         <div className="header-right">
@@ -100,15 +107,21 @@ export const MainContainer: React.FC<MainContainerProps> = ({
       <div className="content-area">
         {currentMode === 'blanking' && selectedText && (
           <BlankingView
-            text={selectedText}
-            onIdentifyKeywords={onIdentifyKeywords}
+            blanks={blanks}
+            imageUrl=""
+            onAnswerSubmit={(blankId, answer) => {
+              console.log('Answer submitted:', blankId, answer);
+            }}
+            onComplete={(result: BlankingResult) => {
+              console.log('Blanking completed:', result);
+            }}
           />
         )}
 
         {currentMode === 'rewriting' && selectedText && (
           <RewritingView
             originalText={selectedText}
-            onRewrite={onRewrite}
+            onRewrite={(style: RewritingStyle) => onRewrite(selectedText, style)}
           />
         )}
 
@@ -126,13 +139,14 @@ export const MainContainer: React.FC<MainContainerProps> = ({
             defaultProvider={appStore.currentAIProvider}
             onUpdateProvider={onUpdateAIProvider}
             onTestConnection={onTestAIConnection}
+            onSetDefaultProvider={onSetDefaultProvider}
           />
         )}
 
         {!currentMode && (
           <div className="welcome-screen">
             <div className="welcome-content">
-              <h2>Welcome to InfoLearn Pro</h2>
+              <h2>Welcome to Star InfoLearn</h2>
               <p>Choose a mode to get started:</p>
               <div className="feature-grid">
                 <div className="feature-card">

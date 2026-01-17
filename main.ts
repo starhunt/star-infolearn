@@ -1,5 +1,5 @@
 /**
- * InfoLearn Pro - Main Plugin File
+ * Star InfoLearn - Main Plugin File
  * Advanced Infographic Learning Tool for Obsidian
  */
 
@@ -13,12 +13,12 @@ import { AssociationService } from './src/services/AssociationService';
 import { useAppStore } from './src/store/appStore';
 import { AIProvider, AIProviderConfig } from './src/types/ai';
 
-interface InfoLearnSettings {
+interface StarInfoLearnSettings {
   defaultProvider: AIProvider;
   providers: Record<AIProvider, AIProviderConfig>;
 }
 
-const DEFAULT_SETTINGS: InfoLearnSettings = {
+const DEFAULT_SETTINGS: StarInfoLearnSettings = {
   defaultProvider: 'gemini',
   providers: {
     openai: {
@@ -54,17 +54,17 @@ const DEFAULT_SETTINGS: InfoLearnSettings = {
   },
 };
 
-export default class InfoLearnPro extends Plugin {
-  settings: InfoLearnSettings;
-  aiService: AIService;
-  dataService: DataService;
-  textExtractorService: TextExtractorService;
-  blankingService: BlankingService;
-  rewritingService: RewritingService;
-  associationService: AssociationService;
+export default class StarInfoLearn extends Plugin {
+  settings!: StarInfoLearnSettings;
+  aiService!: AIService;
+  dataService!: DataService;
+  textExtractorService!: TextExtractorService;
+  blankingService!: BlankingService;
+  rewritingService!: RewritingService;
+  associationService!: AssociationService;
 
   async onload() {
-    console.log('Loading InfoLearn Pro plugin...');
+    console.log('Loading Star InfoLearn plugin...');
 
     // Load settings
     await this.loadSettings();
@@ -90,8 +90,8 @@ export default class InfoLearnPro extends Plugin {
     });
 
     // Add ribbon icon
-    this.addRibbonIcon('book-open', 'InfoLearn Pro', (evt: MouseEvent) => {
-      new Notice('InfoLearn Pro activated! Select a mode to get started.');
+    this.addRibbonIcon('book-open', 'Star InfoLearn', (evt: MouseEvent) => {
+      new Notice('Star InfoLearn activated! Select a mode to get started.');
       this.openInfoLearnView();
     });
 
@@ -139,13 +139,13 @@ export default class InfoLearnPro extends Plugin {
     });
 
     // Add settings tab
-    this.addSettingTab(new InfoLearnSettingTab(this.app, this));
+    this.addSettingTab(new StarInfoLearnSettingTab(this.app, this));
 
-    console.log('InfoLearn Pro plugin loaded successfully!');
+    console.log('Star InfoLearn plugin loaded successfully!');
   }
 
   onunload() {
-    console.log('Unloading InfoLearn Pro plugin...');
+    console.log('Unloading Star InfoLearn plugin...');
   }
 
   async loadSettings() {
@@ -186,7 +186,7 @@ export default class InfoLearnPro extends Plugin {
 
   private openInfoLearnView() {
     // This will be implemented with the UI components
-    new Notice('InfoLearn Pro view will open here');
+    new Notice('Star InfoLearn view will open here');
   }
 
   private async testAIConnection() {
@@ -208,10 +208,10 @@ export default class InfoLearnPro extends Plugin {
   }
 }
 
-class InfoLearnSettingTab extends PluginSettingTab {
-  plugin: InfoLearnPro;
+class StarInfoLearnSettingTab extends PluginSettingTab {
+  plugin: StarInfoLearn;
 
-  constructor(app: App, plugin: InfoLearnPro) {
+  constructor(app: App, plugin: StarInfoLearn) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -220,7 +220,7 @@ class InfoLearnSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: '📚 InfoLearn Pro Settings' });
+    containerEl.createEl('h2', { text: '📚 Star InfoLearn Settings' });
 
     // Default Provider Setting
     new Setting(containerEl)

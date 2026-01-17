@@ -38,7 +38,7 @@ export class InfoLearnView extends ItemView {
   }
 
   getDisplayText(): string {
-    return 'InfoLearn Pro';
+    return 'Star InfoLearn';
   }
 
   getIcon(): string {
@@ -55,7 +55,7 @@ export class InfoLearnView extends ItemView {
     // Create header
     const header = mainDiv.createDiv('main-header');
     const headerLeft = header.createDiv('header-left');
-    headerLeft.createEl('h1', { text: '📚 InfoLearn Pro', cls: 'app-title' });
+    headerLeft.createEl('h1', { text: '📚 Star InfoLearn', cls: 'app-title' });
     headerLeft.createEl('p', { text: 'Advanced Infographic Learning Tool', cls: 'app-subtitle' });
 
     // Create mode selector
@@ -97,7 +97,7 @@ export class InfoLearnView extends ItemView {
     container.empty();
     const content = container.createDiv('welcome-content');
 
-    content.createEl('h2', { text: 'Welcome to InfoLearn Pro' });
+    content.createEl('h2', { text: 'Welcome to Star InfoLearn' });
     content.createEl('p', { text: 'Choose a mode to get started:' });
 
     const grid = content.createDiv('feature-grid');

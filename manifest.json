@@ -1,11 +1,10 @@
 {
-  "id": "infolearn-pro",
-  "name": "InfoLearn Pro",
+  "id": "star-infolearn",
+  "name": "Star InfoLearn",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
   "description": "Advanced infographic learning tool with AI-powered analysis, interactive blanking, content rewriting, and knowledge association.",
-  "author": "InfoLearn Team",
-  "authorUrl": "https://github.com/infolearn-pro",
-  "fundingUrl": "https://buymeacoffee.com/infolearn",
+  "author": "Starhunter",
+  "authorUrl": "https://github.com/starhunter",
   "isDesktopOnly": false
 }

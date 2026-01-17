@@ -18,6 +18,8 @@
     "importHelpers": true,
     "isolatedModules": true,
     "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "jsx": "react-jsx",
     "lib": [
       "DOM",

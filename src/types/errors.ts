@@ -126,6 +126,7 @@ interface AxiosErrorLike {
     data?: {
       error?: { message?: string };
       message?: string;
+      retry_after?: string;
     };
   };
   message: string;
