@@ -1,10 +1,11 @@
 /**
- * AI Service - Handles communication with multiple AI providers
+ * AI Service - Handles communication with multiple AI providers (Simplified)
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { AIProvider, AIProviderConfig, AIResponse, AIServiceConfig, KeywordIdentificationResult, RewritingOptions } from '../types/ai';
+import { AIProvider, AIProviderConfig, AIServiceConfig } from '../types/ai';
 import { AIServiceError, ProviderNotConfiguredError, ApiKeyNotSetError, RateLimitError, isAxiosError } from '../types/errors';
+import { LearningCard, LearningCardType, createLearningCard, QuestionGenerationRequest, QuestionGenerationResult, AnswerEvaluation } from '../types/learning';
 
 export class AIService {
   private config: AIServiceConfig;
@@ -17,12 +18,9 @@ export class AIService {
     this.initializeAxiosInstances();
   }
 
-  /**
-   * Initialize Axios instances for each provider
-   */
   private initializeAxiosInstances(): void {
     const providers: AIProvider[] = ['openai', 'anthropic', 'gemini', 'grok', 'zhipu'];
-    
+
     providers.forEach(provider => {
       const providerConfig = this.config.providers[provider];
       if (providerConfig && providerConfig.apiKey) {
@@ -31,22 +29,16 @@ export class AIService {
     });
   }
 
-  /**
-   * Create Axios instance for specific provider
-   */
   private createAxiosInstance(provider: AIProvider, config: AIProviderConfig): AxiosInstance {
     const baseURL = config.baseUrl || this.getDefaultBaseURL(provider);
-    
+
     return axios.create({
       baseURL,
-      timeout: 30000,
+      timeout: 300000, // 5 minutes for batch generation requests
       headers: this.getHeaders(provider, config),
     });
   }
 
-  /**
-   * Get default base URL for provider
-   */
   private getDefaultBaseURL(provider: AIProvider): string {
     const urls: Record<AIProvider, string> = {
       openai: 'https://api.openai.com/v1',
@@ -58,9 +50,6 @@ export class AIService {
     return urls[provider];
   }
 
-  /**
-   * Get headers for provider
-   */
   private getHeaders(provider: AIProvider, config: AIProviderConfig): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -82,9 +71,6 @@ export class AIService {
     return headers;
   }
 
-  /**
-   * Set the current AI provider
-   */
   setProvider(provider: AIProvider): void {
     if (!this.config.providers[provider]) {
       throw new ProviderNotConfiguredError(provider);
@@ -95,16 +81,10 @@ export class AIService {
     this.currentProvider = provider;
   }
 
-  /**
-   * Get current provider
-   */
   getProvider(): AIProvider {
     return this.currentProvider;
   }
 
-  /**
-   * Test connection to AI provider
-   */
   async testConnection(provider: AIProvider): Promise<boolean> {
     try {
       const config = this.config.providers[provider];
@@ -112,12 +92,9 @@ export class AIService {
         return false;
       }
 
-      // Create temporary axios instance for testing
       const testInstance = this.createAxiosInstance(provider, config);
-      
-      // Send test request based on provider
       const testPrompt = 'Say "OK" only.';
-      
+
       switch (provider) {
         case 'openai':
         case 'grok':
@@ -127,7 +104,7 @@ export class AIService {
             max_tokens: 10,
           });
           break;
-          
+
         case 'anthropic':
           await testInstance.post('/messages', {
             model: config.model,
@@ -135,15 +112,8 @@ export class AIService {
             messages: [{ role: 'user', content: testPrompt }],
           });
           break;
-          
+
         case 'gemini':
-          await testInstance.post('/chat/completions', {
-            model: config.model,
-            messages: [{ role: 'user', content: testPrompt }],
-            max_tokens: 10,
-          });
-          break;
-          
         case 'zhipu':
           await testInstance.post('/chat/completions', {
             model: config.model,
@@ -160,76 +130,6 @@ export class AIService {
     }
   }
 
-  /**
-   * Identify keywords from text (for Blanking feature)
-   */
-  async identifyKeywords(text: string, bounds: { x: number; y: number; width: number; height: number }[]): Promise<KeywordIdentificationResult[]> {
-    const config = this.config.providers[this.currentProvider];
-    if (!config) {
-      throw new ProviderNotConfiguredError(this.currentProvider);
-    }
-
-    const prompt = `Analyze the following text and identify 5-10 key learning keywords that would be good for a fill-in-the-blank exercise. Return a JSON array with objects containing: keyword, importance (0-1).
-
-Text: "${text}"
-
-Return ONLY valid JSON array, no markdown formatting, no code blocks.`;
-
-    try {
-      const response = await this.callAI(prompt);
-      const keywords = JSON.parse(response);
-
-      // Map keywords to bounds
-      return keywords.map((kw: { keyword: string; importance?: number }, index: number) => ({
-        keyword: kw.keyword,
-        bounds: bounds[index % bounds.length],
-        importance: kw.importance || 0.5,
-      }));
-    } catch (error) {
-      if (error instanceof AIServiceError) {
-        throw error;
-      }
-      throw AIServiceError.fromAxiosError(this.currentProvider, error);
-    }
-  }
-
-  /**
-   * Rewrite content based on style
-   */
-  async rewriteContent(text: string, options: RewritingOptions): Promise<string> {
-    const config = this.config.providers[this.currentProvider];
-    if (!config) {
-      throw new ProviderNotConfiguredError(this.currentProvider);
-    }
-
-    const stylePrompts: Record<string, string> = {
-      summary: 'Provide a concise 2-3 sentence summary of the following content.',
-      detailed: 'Provide a detailed explanation of the following content with examples.',
-      beginner: 'Explain the following content in simple terms that a beginner can understand.',
-      expert: 'Provide an expert-level analysis of the following content.',
-      story: 'Rewrite the following content as an engaging story.',
-      report: 'Rewrite the following content as a professional business report.',
-    };
-
-    const prompt = `${stylePrompts[options.style] || stylePrompts.summary}
-
-Content: "${text}"
-
-${options.maxLength ? `Keep the response under ${options.maxLength} characters.` : ''}`;
-
-    try {
-      return await this.callAI(prompt);
-    } catch (error) {
-      if (error instanceof AIServiceError) {
-        throw error;
-      }
-      throw AIServiceError.fromAxiosError(this.currentProvider, error);
-    }
-  }
-
-  /**
-   * Call AI provider
-   */
   private async callAI(prompt: string): Promise<string> {
     const config = this.config.providers[this.currentProvider];
     if (!config) {
@@ -258,7 +158,6 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
         throw error;
       }
 
-      // Check for rate limit error
       if (isAxiosError(error) && error.response?.status === 429) {
         const retryAfter = parseInt(error.response?.data?.retry_after || '60', 10);
         throw new RateLimitError(this.currentProvider, retryAfter);
@@ -268,9 +167,6 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
     }
   }
 
-  /**
-   * Call OpenAI API
-   */
   private async callOpenAI(config: AIProviderConfig, prompt: string): Promise<string> {
     const instance = this.axiosInstances[this.currentProvider];
     if (!instance) {
@@ -281,15 +177,12 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
       model: config.model,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 16000,
     });
 
     return response.data.choices[0].message.content;
   }
 
-  /**
-   * Call Anthropic API
-   */
   private async callAnthropic(config: AIProviderConfig, prompt: string): Promise<string> {
     const instance = this.axiosInstances[this.currentProvider];
     if (!instance) {
@@ -298,16 +191,13 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
 
     const response = await instance.post('/messages', {
       model: config.model,
-      max_tokens: 1000,
+      max_tokens: 16000,
       messages: [{ role: 'user', content: prompt }],
     });
 
     return response.data.content[0].text;
   }
 
-  /**
-   * Call Google Gemini API (OpenAI-compatible endpoint)
-   */
   private async callGemini(config: AIProviderConfig, prompt: string): Promise<string> {
     const instance = this.axiosInstances['gemini'];
     if (!instance) {
@@ -318,15 +208,12 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
       model: config.model,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 16000,
     });
 
     return response.data.choices[0].message.content;
   }
 
-  /**
-   * Call Zhipu GLM API (코딩플랜 엔드포인트)
-   */
   private async callZhipu(config: AIProviderConfig, prompt: string): Promise<string> {
     const instance = this.axiosInstances[this.currentProvider];
     if (!instance) {
@@ -337,15 +224,12 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
       model: config.model,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 16000,
     });
 
     return response.data.choices[0].message.content;
   }
 
-  /**
-   * Update provider configuration
-   */
   updateProviderConfig(provider: AIProvider, config: Partial<AIProviderConfig>): void {
     if (!this.config.providers[provider]) {
       this.config.providers[provider] = {
@@ -360,39 +244,209 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
         ...config,
       };
     }
-    
-    // Reinitialize axios instance for this provider
+
     if (this.config.providers[provider].apiKey) {
       this.axiosInstances[provider] = this.createAxiosInstance(provider, this.config.providers[provider]);
     }
   }
 
-  /**
-   * Get all provider configs
-   */
   getAllProviderConfigs(): Record<AIProvider, AIProviderConfig> {
     return this.config.providers;
   }
 
-  /**
-   * Get provider config
-   */
   getProviderConfig(provider: AIProvider): AIProviderConfig | undefined {
     return this.config.providers[provider];
   }
 
-  /**
-   * Update default provider
-   */
   setDefaultProvider(provider: AIProvider): void {
     this.config.defaultProvider = provider;
     this.currentProvider = provider;
   }
 
-  /**
-   * Get default provider
-   */
   getDefaultProvider(): AIProvider {
     return this.config.defaultProvider;
+  }
+
+  /**
+   * Generate learning questions from content
+   */
+  async generateQuestions(
+    request: QuestionGenerationRequest
+  ): Promise<QuestionGenerationResult> {
+    const config = this.config.providers[this.currentProvider];
+    if (!config) {
+      throw new ProviderNotConfiguredError(this.currentProvider);
+    }
+
+    const questionTypePrompts = this.getQuestionTypePrompts(request.questionTypes);
+
+    const prompt = `당신은 전문 교육 콘텐츠 제작자입니다. 다음 내용에서 학습용 플래시카드를 생성하세요.
+모든 질문과 답변은 반드시 한국어로 작성해야 합니다.
+${request.context ? `주제/맥락: ${request.context}` : ''}
+${request.targetDifficulty ? `목표 난이도: ${request.targetDifficulty}/5` : ''}
+
+분석할 내용:
+"""
+${request.content}
+"""
+
+다음 유형별로 각각 ${request.countPerType}개의 질문을 생성하세요:
+${questionTypePrompts}
+
+다음 구조의 JSON 객체를 반환하세요:
+{
+  "cards": [
+    {
+      "type": "flashcard" | "fill_blank" | "multiple_choice" | "short_answer",
+      "front": "질문 텍스트 (한국어)",
+      "back": "답변 텍스트 (한국어)",
+      "hint": "선택적 힌트 (null 가능, 한국어)",
+      "explanation": "정답인 이유 설명 (null 가능, 한국어)",
+      "difficulty": 1-5,
+      "options": [{"id": "a", "text": "선택지 텍스트 (한국어)", "isCorrect": true/false}]
+    }
+  ],
+  "concepts": ["개념1", "개념2"],
+  "confidence": 0.0-1.0
+}
+
+중요:
+- 모든 텍스트(front, back, hint, explanation, options)는 반드시 한국어로 작성하세요
+- "front"와 "back"은 반드시 문자열이어야 합니다 (객체 아님)
+- "options" 배열은 multiple_choice 유형에만 필요합니다
+- fill_blank의 경우, front 텍스트에서 빈칸은 "___"로 표시합니다
+- 마크다운 포맷팅이나 코드 블록 없이 유효한 JSON만 반환하세요`;
+
+    try {
+      const response = await this.callAI(prompt);
+
+      // Try to extract JSON from the response
+      let jsonStr = response.trim();
+
+      // Log raw response for debugging
+      console.log('AI raw response length:', response.length);
+
+      if (!jsonStr) {
+        throw new AIServiceError('Empty response from AI', this.currentProvider);
+      }
+
+      if (jsonStr.startsWith('```')) {
+        jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```/g, '');
+      }
+
+      // Try to find JSON object in response
+      const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonStr = jsonMatch[0];
+      }
+
+      let result;
+      try {
+        result = JSON.parse(jsonStr);
+      } catch (parseError) {
+        console.error('JSON parse error. Response:', jsonStr.slice(0, 500));
+        throw new AIServiceError(
+          `Invalid JSON response from AI. Response preview: ${jsonStr.slice(0, 200)}...`,
+          this.currentProvider
+        );
+      }
+
+      const cards: LearningCard[] = result.cards.map((cardData: Record<string, unknown>) => {
+        // Handle both old format (object) and new format (string) for front/back
+        const front = typeof cardData.front === 'object'
+          ? (cardData.front as { content: string }).content
+          : cardData.front as string;
+
+        const back = typeof cardData.back === 'object'
+          ? (cardData.back as { content: string }).content
+          : cardData.back as string;
+
+        return createLearningCard({
+          type: cardData.type as LearningCardType,
+          sourceFile: '',
+          front,
+          back,
+          hint: cardData.hint as string | undefined,
+          explanation: cardData.explanation as string | undefined,
+          difficulty: (cardData.difficulty as 1 | 2 | 3 | 4 | 5) || 3,
+          options: cardData.options as LearningCard['options'],
+          tags: ['ai-generated'],
+        });
+      });
+
+      return {
+        cards,
+        confidence: result.confidence || 0.8,
+        concepts: result.concepts || [],
+      };
+    } catch (error) {
+      console.error('Error generating questions:', error);
+      throw AIServiceError.fromAxiosError(this.currentProvider, error);
+    }
+  }
+
+  private getQuestionTypePrompts(types: LearningCardType[]): string {
+    const typeDescriptions: Record<LearningCardType, string> = {
+      flashcard: '플래시카드: 간단한 Q&A 카드를 만드세요. front는 질문, back은 답변입니다.',
+      fill_blank: '빈칸 채우기: 문장에서 핵심 용어를 제거합니다. front에는 빈칸(___사용), back에는 정답 단어를 넣습니다.',
+      multiple_choice: '객관식: 4개의 선택지(정답 1개)가 있는 질문을 만드세요. id, text, isCorrect가 포함된 options 배열이 필수입니다.',
+      short_answer: '단답형: 짧은 서술형 답변이 필요한 질문을 만드세요.',
+    };
+
+    return types
+      .map((type) => `- ${typeDescriptions[type]}`)
+      .join('\n');
+  }
+
+  /**
+   * Evaluate user's answer using AI
+   */
+  async evaluateAnswer(
+    expectedAnswer: string,
+    userAnswer: string,
+    context?: string
+  ): Promise<AnswerEvaluation> {
+    const prompt = `You are an educational assessment expert. Evaluate the student's answer.
+
+Expected Answer:
+"""
+${expectedAnswer}
+"""
+
+Student's Answer:
+"""
+${userAnswer}
+"""
+${context ? `\nContext: ${context}` : ''}
+
+Evaluate for meaning/understanding, not just exact word matching.
+
+Return a JSON object:
+{
+  "isCorrect": true/false,
+  "score": 0.0-1.0,
+  "feedback": "Constructive feedback for the student",
+  "correctPoints": ["Things they got right"],
+  "missedPoints": ["Key points they missed"],
+  "suggestion": "How to improve"
+}
+
+Return ONLY valid JSON.`;
+
+    try {
+      const response = await this.callAI(prompt);
+      let jsonStr = response.trim();
+      if (jsonStr.startsWith('```')) {
+        jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```/g, '');
+      }
+      return JSON.parse(jsonStr);
+    } catch (error) {
+      console.error('Error evaluating answer:', error);
+      return {
+        isCorrect: false,
+        score: 0,
+        feedback: 'Unable to evaluate answer automatically. Please review manually.',
+      };
+    }
   }
 }

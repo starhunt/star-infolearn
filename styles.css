@@ -1,59 +1,66 @@
-/**
- * Star InfoLearn - Modern UI Stylesheet
- * Beautiful, accessible, and responsive design
- */
-
-/* ========== Container with CSS Variables ========== */
+/* src/styles/main.css */
 .star-infolearn-container {
-  /* Color Variables */
   --sil-accent: #6366f1;
   --sil-accent-hover: #4f46e5;
   --sil-success: #10b981;
   --sil-warning: #f59e0b;
   --sil-danger: #ef4444;
   --sil-info: #3b82f6;
-
-  /* Gradient Variables */
-  --sil-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --sil-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --sil-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --sil-gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-
-  /* Shadow Variables */
+  --sil-gradient-1:
+    linear-gradient(
+      135deg,
+      #667eea 0%,
+      #764ba2 100%);
+  --sil-gradient-2:
+    linear-gradient(
+      135deg,
+      #f093fb 0%,
+      #f5576c 100%);
+  --sil-gradient-3:
+    linear-gradient(
+      135deg,
+      #4facfe 0%,
+      #00f2fe 100%);
+  --sil-gradient-4:
+    linear-gradient(
+      135deg,
+      #43e97b 0%,
+      #38f9d7 100%);
   --sil-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --sil-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --sil-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --sil-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
-  /* Radius Variables */
   --sil-radius-sm: 6px;
   --sil-radius-md: 10px;
   --sil-radius-lg: 16px;
   --sil-radius-xl: 24px;
-
-  /* Container Styles */
   display: flex;
   flex-direction: column;
   height: 100%;
   background: var(--background-primary);
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
-
 .sil-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
 }
-
-/* ========== Header ========== */
 .sil-header {
   padding: 20px 24px 16px;
-  background: linear-gradient(180deg, var(--background-secondary) 0%, var(--background-primary) 100%);
+  background:
+    linear-gradient(
+      180deg,
+      var(--background-secondary) 0%,
+      var(--background-primary) 100%);
   border-bottom: 1px solid var(--background-modifier-border);
 }
-
 .sil-header h2 {
   margin: 0 0 12px 0;
   font-size: 24px;
@@ -64,11 +71,9 @@
   background-clip: text;
   letter-spacing: -0.5px;
 }
-
 .sil-header-stats {
   margin-bottom: 8px;
 }
-
 .sil-stats-text {
   display: inline-flex;
   align-items: center;
@@ -81,7 +86,6 @@
   color: var(--text-muted);
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-text-preview {
   display: flex;
   align-items: center;
@@ -93,13 +97,10 @@
   border-left: 3px solid var(--sil-accent);
   margin-top: 12px;
 }
-
 .sil-preview-text {
   color: var(--text-muted);
   font-style: italic;
 }
-
-/* ========== Mode Selector ========== */
 .sil-mode-selector {
   display: flex;
   gap: 6px;
@@ -109,11 +110,9 @@
   overflow-x: auto;
   scrollbar-width: none;
 }
-
 .sil-mode-selector::-webkit-scrollbar {
   display: none;
 }
-
 .sil-mode-btn {
   display: flex;
   align-items: center;
@@ -131,9 +130,8 @@
   position: relative;
   overflow: hidden;
 }
-
 .sil-mode-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: var(--sil-gradient-1);
@@ -141,40 +139,33 @@
   transition: opacity 0.25s ease;
   border-radius: inherit;
 }
-
 .sil-mode-btn:hover {
   color: var(--text-normal);
   background: var(--background-modifier-hover);
   transform: translateY(-2px);
 }
-
 .sil-mode-btn.active {
   color: white;
   background: var(--sil-gradient-1);
   box-shadow: var(--sil-shadow-md), 0 0 20px rgba(99, 102, 241, 0.3);
   transform: translateY(-2px);
 }
-
 .sil-mode-icon {
   font-size: 16px;
   position: relative;
   z-index: 1;
 }
-
 .sil-mode-name {
   font-weight: 700;
   position: relative;
   z-index: 1;
 }
-
-/* ========== Content Area ========== */
 .sil-content {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
   scroll-behavior: smooth;
 }
-
 .sil-content h3 {
   margin: 0 0 20px 0;
   font-size: 20px;
@@ -184,7 +175,6 @@
   align-items: center;
   gap: 10px;
 }
-
 .sil-content h4 {
   margin: 0 0 12px 0;
   font-size: 14px;
@@ -193,34 +183,28 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
-/* ========== Welcome Screen ========== */
 .sil-welcome {
   max-width: 640px;
   margin: 0 auto;
   padding: 40px 20px;
 }
-
 .sil-welcome h3 {
   font-size: 28px;
   text-align: center;
   margin-bottom: 8px;
 }
-
 .sil-welcome > p {
   text-align: center;
   color: var(--text-muted);
   font-size: 16px;
   margin-bottom: 32px;
 }
-
 .sil-quick-actions {
   display: flex;
   gap: 12px;
   justify-content: center;
   margin-bottom: 40px;
 }
-
 .sil-action-btn {
   display: flex;
   align-items: center;
@@ -235,69 +219,61 @@
   cursor: pointer;
   transition: all 0.25s ease;
 }
-
 .sil-action-btn:hover {
   border-color: var(--sil-accent);
   transform: translateY(-3px);
   box-shadow: var(--sil-shadow-lg);
 }
-
 .sil-action-btn.primary {
   background: var(--sil-gradient-1);
   border: none;
   color: white;
 }
-
 .sil-action-btn.primary:hover {
   box-shadow: var(--sil-shadow-lg), 0 0 30px rgba(99, 102, 241, 0.4);
 }
-
 .sil-features {
   background: var(--background-secondary);
   border-radius: var(--sil-radius-lg);
   padding: 24px;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-feature-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 .sil-feature-list li {
   padding: 12px 0;
   border-bottom: 1px solid var(--background-modifier-border);
   font-size: 14px;
   color: var(--text-normal);
 }
-
 .sil-feature-list li:last-child {
   border-bottom: none;
 }
-
 .sil-tip {
   margin-top: 24px;
   padding: 16px 20px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.1) 0%,
+      rgba(168, 85, 247, 0.1) 100%);
   border-radius: var(--sil-radius-md);
   font-size: 14px;
   color: var(--text-normal);
   border: 1px solid rgba(99, 102, 241, 0.2);
 }
-
-/* ========== Study Dashboard ========== */
 .sil-study h3 {
   margin-bottom: 24px;
 }
-
 .sil-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
 }
-
 .sil-stat-card {
   display: flex;
   flex-direction: column;
@@ -308,30 +284,33 @@
   border: 1px solid var(--background-modifier-border);
   transition: all 0.25s ease;
 }
-
 .sil-stat-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--sil-shadow-lg);
   border-color: var(--sil-accent);
 }
-
-.sil-stat-card:nth-child(1) { border-top: 3px solid #6366f1; }
-.sil-stat-card:nth-child(2) { border-top: 3px solid #ef4444; }
-.sil-stat-card:nth-child(3) { border-top: 3px solid #10b981; }
-.sil-stat-card:nth-child(4) { border-top: 3px solid #f59e0b; }
-
+.sil-stat-card:nth-child(1) {
+  border-top: 3px solid #6366f1;
+}
+.sil-stat-card:nth-child(2) {
+  border-top: 3px solid #ef4444;
+}
+.sil-stat-card:nth-child(3) {
+  border-top: 3px solid #10b981;
+}
+.sil-stat-card:nth-child(4) {
+  border-top: 3px solid #f59e0b;
+}
 .sil-stat-icon {
   font-size: 28px;
   margin-bottom: 8px;
 }
-
 .sil-stat-value {
   font-size: 32px;
   font-weight: 800;
   color: var(--text-normal);
   line-height: 1;
 }
-
 .sil-stat-label {
   font-size: 12px;
   font-weight: 600;
@@ -340,30 +319,25 @@
   letter-spacing: 0.5px;
   margin-top: 8px;
 }
-
 .sil-actions-section {
   margin-bottom: 32px;
 }
-
 .sil-action-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-
 .sil-recent-section {
   background: var(--background-secondary);
   border-radius: var(--sil-radius-lg);
   padding: 20px;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-card-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 .sil-card-item {
   display: flex;
   align-items: center;
@@ -373,15 +347,12 @@
   border-radius: var(--sil-radius-md);
   transition: all 0.2s ease;
 }
-
 .sil-card-item:hover {
   background: var(--background-modifier-hover);
 }
-
 .sil-card-type {
   font-size: 20px;
 }
-
 .sil-card-preview {
   flex: 1;
   font-size: 14px;
@@ -390,7 +361,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .sil-card-state {
   padding: 4px 10px;
   border-radius: 12px;
@@ -398,40 +368,44 @@
   font-weight: 700;
   text-transform: uppercase;
 }
-
-.sil-card-state.new { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-.sil-card-state.learning { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-.sil-card-state.review { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-.sil-card-state.relearning { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-
-/* ========== Review Mode ========== */
+.sil-card-state.new {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+.sil-card-state.learning {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+.sil-card-state.review {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+.sil-card-state.relearning {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
 .sil-review {
   max-width: 700px;
   margin: 0 auto;
 }
-
 .sil-empty-state {
   text-align: center;
   padding: 60px 20px;
 }
-
 .sil-empty-icon {
   font-size: 64px;
   margin-bottom: 16px;
 }
-
 .sil-empty-state h4 {
   font-size: 24px;
   color: var(--text-normal);
   margin-bottom: 8px;
   text-transform: none;
 }
-
 .sil-empty-state p {
   color: var(--text-muted);
   margin-bottom: 24px;
 }
-
 .sil-empty-state button {
   padding: 12px 24px;
   background: var(--background-secondary);
@@ -442,28 +416,23 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .sil-empty-state button:hover {
   border-color: var(--sil-accent);
 }
-
 .sil-start-section {
   text-align: center;
   padding: 40px;
   background: var(--background-secondary);
   border-radius: var(--sil-radius-lg);
 }
-
 .sil-start-section p {
   font-size: 18px;
   color: var(--text-normal);
   margin-bottom: 24px;
 }
-
 .sil-progress-section {
   margin-bottom: 24px;
 }
-
 .sil-progress-bar {
   height: 8px;
   background: var(--background-modifier-border);
@@ -471,20 +440,17 @@
   overflow: hidden;
   margin-bottom: 8px;
 }
-
 .sil-progress-fill {
   height: 100%;
   background: var(--sil-gradient-1);
   border-radius: 4px;
   transition: width 0.5s ease;
 }
-
 .sil-progress-text {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-muted);
 }
-
 .sil-card-display {
   background: var(--background-secondary);
   border-radius: var(--sil-radius-xl);
@@ -493,31 +459,26 @@
   border: 1px solid var(--background-modifier-border);
   box-shadow: var(--sil-shadow-lg);
 }
-
 .sil-card-front,
 .sil-card-back {
   text-align: center;
 }
-
 .sil-card-front .sil-card-content {
   font-size: 20px;
   font-weight: 600;
   color: var(--text-normal);
   line-height: 1.6;
 }
-
 .sil-card-back {
   margin-top: 32px;
   padding-top: 32px;
   border-top: 2px dashed var(--background-modifier-border);
 }
-
 .sil-card-back .sil-card-content {
   font-size: 18px;
   color: var(--text-normal);
   line-height: 1.6;
 }
-
 .sil-show-answer-btn {
   display: block;
   width: 100%;
@@ -531,28 +492,23 @@
   cursor: pointer;
   transition: all 0.25s ease;
 }
-
 .sil-show-answer-btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--sil-shadow-lg), 0 0 30px rgba(99, 102, 241, 0.4);
 }
-
 .sil-rating-section {
   text-align: center;
 }
-
 .sil-rating-section > p {
   font-size: 14px;
   color: var(--text-muted);
   margin-bottom: 16px;
 }
-
 .sil-rating-buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
-
 .sil-rating-btn {
   display: flex;
   flex-direction: column;
@@ -564,7 +520,6 @@
   cursor: pointer;
   transition: all 0.25s ease;
 }
-
 .sil-rating-btn.again {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.3);
@@ -574,7 +529,6 @@
   border-color: #ef4444;
   transform: translateY(-3px);
 }
-
 .sil-rating-btn.hard {
   background: rgba(245, 158, 11, 0.1);
   border-color: rgba(245, 158, 11, 0.3);
@@ -584,7 +538,6 @@
   border-color: #f59e0b;
   transform: translateY(-3px);
 }
-
 .sil-rating-btn.good {
   background: rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.3);
@@ -594,7 +547,6 @@
   border-color: #10b981;
   transform: translateY(-3px);
 }
-
 .sil-rating-btn.easy {
   background: rgba(59, 130, 246, 0.1);
   border-color: rgba(59, 130, 246, 0.3);
@@ -604,31 +556,29 @@
   border-color: #3b82f6;
   transform: translateY(-3px);
 }
-
 .sil-rating-label {
   font-size: 15px;
   font-weight: 700;
   color: var(--text-normal);
 }
-
 .sil-rating-desc {
   font-size: 11px;
   color: var(--text-muted);
 }
-
-/* ========== Card Editor Mode ========== */
 .sil-card-editor h3 {
   margin-bottom: 24px;
 }
-
 .sil-selection-section {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.1) 0%,
+      rgba(168, 85, 247, 0.1) 100%);
   border-radius: var(--sil-radius-lg);
   padding: 24px;
   margin-bottom: 32px;
   border: 1px solid rgba(99, 102, 241, 0.2);
 }
-
 .sil-selected-text {
   font-style: italic;
   color: var(--text-muted);
@@ -637,20 +587,17 @@
   border-radius: var(--sil-radius-md);
   margin-bottom: 16px;
 }
-
 .sil-manual-section {
   background: var(--background-secondary);
   border-radius: var(--sil-radius-lg);
   padding: 24px;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
 .sil-input,
 .sil-select {
   width: 100%;
@@ -663,24 +610,19 @@
   transition: all 0.2s ease;
   resize: vertical;
 }
-
 .sil-input:focus,
 .sil-select:focus {
   outline: none;
   border-color: var(--sil-accent);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
-
 .sil-input::placeholder {
   color: var(--text-faint);
 }
-
-/* ========== Infographic Mode ========== */
 .sil-infographic {
   max-width: 800px;
   margin: 0 auto;
 }
-
 .sil-description {
   background: var(--background-secondary);
   border-radius: var(--sil-radius-lg);
@@ -688,12 +630,10 @@
   margin-bottom: 24px;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-description p {
   color: var(--text-muted);
   line-height: 1.6;
 }
-
 .sil-instructions {
   background: var(--background-secondary);
   border-radius: var(--sil-radius-lg);
@@ -701,17 +641,14 @@
   margin-bottom: 24px;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-instructions ol {
   margin: 0;
   padding-left: 20px;
 }
-
 .sil-instructions li {
   padding: 8px 0;
   color: var(--text-normal);
 }
-
 .sil-viewer-placeholder {
   display: flex;
   align-items: center;
@@ -722,30 +659,23 @@
   border-radius: var(--sil-radius-lg);
   color: var(--text-muted);
 }
-
-/* ========== Knowledge Graph Mode ========== */
 .sil-knowledge-graph {
   max-width: 900px;
   margin: 0 auto;
 }
-
 .sil-graph-stats {
   margin-bottom: 20px;
 }
-
 .sil-graph-stats p {
   color: var(--text-muted);
 }
-
 .sil-graph-placeholder {
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-placeholder-text {
   color: var(--text-muted);
 }
-
 .sil-graph-legend {
   background: var(--background-secondary);
   border-radius: var(--sil-radius-lg);
@@ -753,30 +683,24 @@
   margin-top: 24px;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-legend-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
 }
-
 .sil-legend-item {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-
 .sil-legend-dot {
   width: 14px;
   height: 14px;
   border-radius: 50%;
 }
-
-/* ========== Settings Mode ========== */
 .sil-settings h3 {
   margin-bottom: 24px;
 }
-
 .sil-provider {
   padding: 20px;
   margin-bottom: 16px;
@@ -785,41 +709,38 @@
   border: 2px solid var(--background-modifier-border);
   transition: all 0.2s ease;
 }
-
 .sil-provider:hover {
   border-color: var(--text-muted);
 }
-
 .sil-provider.default {
   border-color: var(--sil-accent);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.05) 0%,
+      rgba(168, 85, 247, 0.05) 100%);
 }
-
 .sil-provider-header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
 }
-
 .sil-provider-header strong {
   font-size: 15px;
   font-weight: 700;
   color: var(--text-normal);
 }
-
 .sil-ok {
   color: var(--sil-success);
   font-size: 13px;
   font-weight: 600;
 }
-
 .sil-warn {
   color: var(--sil-warning);
   font-size: 13px;
   font-weight: 600;
 }
-
 .sil-provider input {
   width: 100%;
   padding: 12px 16px;
@@ -831,18 +752,15 @@
   margin-bottom: 16px;
   transition: all 0.2s ease;
 }
-
 .sil-provider input:focus {
   outline: none;
   border-color: var(--sil-accent);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
-
 .sil-provider-actions {
   display: flex;
   gap: 10px;
 }
-
 .sil-provider-actions button {
   padding: 10px 18px;
   font-size: 13px;
@@ -854,17 +772,14 @@
   color: var(--text-normal);
   transition: all 0.2s ease;
 }
-
 .sil-provider-actions button:hover {
   border-color: var(--sil-accent);
   color: var(--sil-accent);
 }
-
 .sil-provider-actions button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 .sil-settings-link {
   margin-top: 32px;
   padding: 20px;
@@ -873,19 +788,15 @@
   text-align: center;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-settings-link p {
   margin: 0 0 8px 0;
   font-size: 14px;
   color: var(--text-muted);
 }
-
 .sil-settings-link strong {
   font-size: 13px;
   color: var(--text-normal);
 }
-
-/* ========== Primary Button ========== */
 .sil-primary-btn {
   padding: 14px 28px;
   font-size: 15px;
@@ -898,23 +809,18 @@
   transition: all 0.25s ease;
   box-shadow: var(--sil-shadow-md);
 }
-
 .sil-primary-btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--sil-shadow-lg), 0 0 30px rgba(99, 102, 241, 0.3);
 }
-
 .sil-primary-btn:active {
   transform: translateY(0);
 }
-
 .sil-primary-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
-
-/* ========== Deprecation Notice ========== */
 .sil-deprecation-notice {
   padding: 12px 16px;
   background: rgba(245, 158, 11, 0.1);
@@ -924,8 +830,6 @@
   font-size: 13px;
   margin-bottom: 20px;
 }
-
-/* ========== Loading ========== */
 .sil-loading {
   display: flex;
   align-items: center;
@@ -935,9 +839,8 @@
   color: var(--text-muted);
   font-size: 15px;
 }
-
 .sil-loading::before {
-  content: '';
+  content: "";
   width: 20px;
   height: 20px;
   border: 2px solid var(--background-modifier-border);
@@ -945,12 +848,11 @@
   border-radius: 50%;
   animation: sil-spin 0.8s linear infinite;
 }
-
 @keyframes sil-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
-/* ========== Hint ========== */
 .sil-hint {
   color: var(--text-muted);
   font-style: italic;
@@ -959,8 +861,6 @@
   border-radius: var(--sil-radius-md);
   border-left: 4px solid var(--sil-accent);
 }
-
-/* ========== Footer ========== */
 .sil-footer {
   display: flex;
   align-items: center;
@@ -972,86 +872,68 @@
   font-weight: 600;
   color: var(--text-muted);
 }
-
-/* ========== Scrollbar Styling ========== */
 .sil-content::-webkit-scrollbar {
   width: 8px;
 }
-
 .sil-content::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .sil-content::-webkit-scrollbar-thumb {
   background-color: var(--background-modifier-border);
   border-radius: 4px;
 }
-
 .sil-content::-webkit-scrollbar-thumb:hover {
   background-color: var(--text-muted);
 }
-
-/* ========== Responsive Design ========== */
 @media (max-width: 600px) {
   .sil-header {
     padding: 16px;
   }
-
   .sil-header h2 {
     font-size: 20px;
   }
-
   .sil-mode-selector {
     padding: 10px 12px;
   }
-
   .sil-mode-btn {
     padding: 8px 12px;
     font-size: 12px;
   }
-
   .sil-content {
     padding: 16px;
   }
-
   .sil-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-
   .sil-rating-buttons {
     grid-template-columns: repeat(2, 1fr);
   }
-
   .sil-quick-actions {
     flex-direction: column;
   }
-
   .sil-action-btn {
     width: 100%;
     justify-content: center;
   }
 }
-
-/* ========== Dark Mode Adjustments ========== */
 .theme-dark .star-infolearn-container {
   --sil-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
   --sil-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
   --sil-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
-
-/* ========== Animations ========== */
 @keyframes sil-fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 .sil-content > div {
   animation: sil-fadeIn 0.3s ease;
 }
-
-/* ========== Quiz Types Styles ========== */
-
-/* Card Type Indicator */
 .sil-card-type-indicator {
   text-align: center;
   padding: 8px 16px;
@@ -1062,8 +944,6 @@
   font-weight: 600;
   color: var(--text-muted);
 }
-
-/* Question styling */
 .sil-card-question {
   font-size: 20px;
   font-weight: 600;
@@ -1072,7 +952,6 @@
   text-align: center;
   margin-bottom: 24px;
 }
-
 .sil-card-instruction {
   font-size: 14px;
   color: var(--text-muted);
@@ -1081,15 +960,12 @@
   margin-bottom: 12px;
   text-align: center;
 }
-
-/* Multiple Choice Options */
 .sil-options {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-top: 24px;
 }
-
 .sil-option {
   display: flex;
   align-items: center;
@@ -1103,28 +979,22 @@
   font-size: 15px;
   color: var(--text-normal);
 }
-
 .sil-option:hover {
   border-color: var(--sil-accent);
   background: rgba(99, 102, 241, 0.05);
 }
-
 .sil-option.selected {
   border-color: var(--sil-accent);
   background: rgba(99, 102, 241, 0.1);
 }
-
 .sil-option.correct {
   border-color: var(--sil-success);
   background: rgba(16, 185, 129, 0.15);
 }
-
 .sil-option.incorrect {
   border-color: var(--sil-danger);
   background: rgba(239, 68, 68, 0.15);
 }
-
-/* Result indicator */
 .sil-result {
   text-align: center;
   padding: 16px 20px;
@@ -1133,20 +1003,16 @@
   font-weight: 700;
   font-size: 16px;
 }
-
 .sil-result.correct {
   background: rgba(16, 185, 129, 0.15);
   color: var(--sil-success);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
-
 .sil-result.incorrect {
   background: rgba(239, 68, 68, 0.15);
   color: var(--sil-danger);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
-
-/* Explanation */
 .sil-explanation {
   margin-top: 16px;
   padding: 16px 20px;
@@ -1157,22 +1023,18 @@
   color: var(--text-normal);
   line-height: 1.6;
 }
-
-/* Fill in the Blank */
 .sil-blank-inputs {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-top: 24px;
 }
-
 .sil-blank-input-wrapper {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .sil-blank-input {
   flex: 1;
   min-width: 200px;
@@ -1184,36 +1046,29 @@
   color: var(--text-normal);
   transition: all 0.2s ease;
 }
-
 .sil-blank-input:focus {
   outline: none;
   border-color: var(--sil-accent);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
-
 .sil-blank-answer {
   padding: 4px 12px;
   border-radius: var(--sil-radius-sm);
   font-weight: 600;
 }
-
 .sil-blank-answer.correct {
   background: rgba(16, 185, 129, 0.2);
   color: var(--sil-success);
 }
-
 .sil-blank-answer.incorrect {
   background: rgba(239, 68, 68, 0.2);
   color: var(--sil-danger);
   text-decoration: line-through;
 }
-
 .sil-correct-answer {
   color: var(--sil-success);
   font-weight: 600;
 }
-
-/* Short Answer */
 .sil-answer-textarea {
   width: 100%;
   min-height: 120px;
@@ -1228,36 +1083,29 @@
   transition: all 0.2s ease;
   margin-top: 16px;
 }
-
 .sil-answer-textarea:focus {
   outline: none;
   border-color: var(--sil-accent);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
-
 .sil-user-answer,
 .sil-correct-answer-section {
   padding: 16px 20px;
   border-radius: var(--sil-radius-md);
   margin-top: 16px;
 }
-
 .sil-user-answer {
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-correct-answer-section {
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
-
 .sil-answer-text {
   font-weight: 600;
   color: var(--text-normal);
 }
-
-/* Submit Button */
 .sil-submit-btn {
   display: block;
   width: 100%;
@@ -1272,45 +1120,37 @@
   cursor: pointer;
   transition: all 0.25s ease;
 }
-
 .sil-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: var(--sil-shadow-lg), 0 0 30px rgba(99, 102, 241, 0.4);
 }
-
 .sil-submit-btn.disabled,
 .sil-submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
-
-/* MCQ Options in Card Editor */
 .sil-mcq-options {
   background: var(--background-primary);
   padding: 16px;
   border-radius: var(--sil-radius-md);
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-options-container {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .sil-option-row {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
-.sil-option-row input[type="checkbox"] {
+.sil-option-row input[type=checkbox] {
   width: 20px;
   height: 20px;
   cursor: pointer;
 }
-
 .sil-option-input {
   flex: 1;
   padding: 10px 14px;
@@ -1321,19 +1161,15 @@
   color: var(--text-normal);
   transition: all 0.2s ease;
 }
-
 .sil-option-input:focus {
   outline: none;
   border-color: var(--sil-accent);
 }
-
-/* Form Groups */
 .sil-form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 .sil-form-group label {
   font-size: 13px;
   font-weight: 600;
@@ -1341,8 +1177,6 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
-/* Existing Cards in Editor */
 .sil-existing-cards {
   margin-top: 32px;
   background: var(--background-secondary);
@@ -1350,16 +1184,13 @@
   padding: 20px;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-card-list.editable .sil-card-item {
   justify-content: space-between;
 }
-
 .sil-card-actions {
   display: flex;
   gap: 8px;
 }
-
 .sil-delete-btn {
   width: 28px;
   height: 28px;
@@ -1375,13 +1206,10 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .sil-delete-btn:hover {
   background: rgba(239, 68, 68, 0.2);
   transform: scale(1.1);
 }
-
-/* No Due Cards Message */
 .sil-no-due {
   padding: 16px 20px;
   background: var(--background-secondary);
@@ -1389,8 +1217,6 @@
   color: var(--text-muted);
   font-style: italic;
 }
-
-/* Distribution Section */
 .sil-distribution-section {
   margin-top: 24px;
   background: var(--background-secondary);
@@ -1398,13 +1224,11 @@
   padding: 20px;
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-type-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
 }
-
 .sil-type-item {
   display: flex;
   align-items: center;
@@ -1414,31 +1238,21 @@
   border-radius: var(--sil-radius-md);
   font-size: 14px;
 }
-
 .sil-type-icon {
   font-size: 18px;
 }
-
 .sil-type-count {
   font-weight: 600;
   color: var(--text-normal);
 }
-
-/* Stat Card Highlight */
 .sil-stat-card.highlight {
   border-color: var(--sil-danger);
   box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
 }
-
-/* Error message */
 .sil-error {
   color: var(--sil-danger);
   font-style: italic;
 }
-
-/* ========== Create Tab - New Design ========== */
-
-/* Mode Toggle */
 .sil-mode-toggle {
   display: flex;
   gap: 8px;
@@ -1447,7 +1261,6 @@
   background: var(--background-secondary);
   border-radius: var(--sil-radius-lg);
 }
-
 .sil-toggle-btn {
   flex: 1;
   padding: 12px 20px;
@@ -1460,19 +1273,15 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .sil-toggle-btn:hover {
   color: var(--text-normal);
   background: var(--background-modifier-hover);
 }
-
 .sil-toggle-btn.active {
   background: var(--sil-gradient-1);
   color: white;
   box-shadow: var(--sil-shadow-md);
 }
-
-/* Note Info Card */
 .sil-note-info-card {
   display: flex;
   align-items: flex-start;
@@ -1483,29 +1292,24 @@
   border: 1px solid var(--background-modifier-border);
   margin-bottom: 20px;
 }
-
 .sil-note-icon {
   font-size: 32px;
   line-height: 1;
 }
-
 .sil-note-details {
   flex: 1;
 }
-
 .sil-note-name {
   font-size: 16px;
   font-weight: 700;
   color: var(--text-normal);
   margin-bottom: 4px;
 }
-
 .sil-note-path {
   font-size: 12px;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
-
 .sil-note-status {
   display: inline-flex;
   align-items: center;
@@ -1515,37 +1319,34 @@
   font-size: 13px;
   font-weight: 600;
 }
-
 .sil-note-status.new {
   background: rgba(16, 185, 129, 0.15);
   color: var(--sil-success);
 }
-
 .sil-note-status.generated {
   background: rgba(59, 130, 246, 0.15);
   color: var(--sil-info);
 }
-
 .sil-status-icon {
   font-size: 14px;
 }
-
 .sil-note-empty {
   color: var(--text-muted);
   font-style: italic;
   padding: 20px;
   text-align: center;
 }
-
-/* Selection Preview */
 .sil-selection-preview {
   padding: 16px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.1) 0%,
+      rgba(168, 85, 247, 0.1) 100%);
   border-radius: var(--sil-radius-md);
   border-left: 4px solid var(--sil-accent);
   margin-bottom: 20px;
 }
-
 .sil-selection-preview label {
   font-size: 12px;
   font-weight: 600;
@@ -1555,19 +1356,15 @@
   display: block;
   margin-bottom: 8px;
 }
-
 .sil-selection-preview .sil-preview-text {
   font-style: italic;
   color: var(--text-normal);
   font-size: 14px;
   line-height: 1.5;
 }
-
-/* Type Section */
 .sil-type-section {
   margin-bottom: 20px;
 }
-
 .sil-type-section > label {
   display: block;
   font-size: 13px;
@@ -1575,13 +1372,11 @@
   color: var(--text-muted);
   margin-bottom: 12px;
 }
-
 .sil-type-checkboxes {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-
 .sil-type-checkbox {
   display: flex;
   align-items: center;
@@ -1595,62 +1390,49 @@
   font-size: 14px;
   color: var(--text-normal);
 }
-
 .sil-type-checkbox:hover {
   border-color: var(--sil-accent);
 }
-
 .sil-type-checkbox:has(input:checked) {
   border-color: var(--sil-accent);
   background: rgba(99, 102, 241, 0.1);
 }
-
 .sil-type-checkbox input {
   margin: 0;
   cursor: pointer;
 }
-
-/* Count Section */
 .sil-count-section {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
 }
-
 .sil-count-section > label {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-muted);
 }
-
 .sil-count-select {
   width: auto;
   min-width: 80px;
   padding: 8px 12px;
 }
-
-/* Generate Button */
 .sil-generate-btn {
   width: 100%;
   padding: 16px 24px;
   font-size: 16px;
   margin-bottom: 24px;
 }
-
 .sil-generate-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
-/* Manual Link Section */
 .sil-manual-link-section {
   text-align: center;
   padding: 16px;
   border-top: 1px solid var(--background-modifier-border);
   margin-top: 8px;
 }
-
 .sil-link-btn {
   background: none;
   border: none;
@@ -1662,18 +1444,14 @@
   border-radius: var(--sil-radius-md);
   transition: all 0.2s ease;
 }
-
 .sil-link-btn:hover {
   background: rgba(99, 102, 241, 0.1);
   text-decoration: underline;
 }
-
-/* Batch Mode Styles */
 .sil-folder-section,
 .sil-date-section {
   margin-bottom: 20px;
 }
-
 .sil-folder-section > label,
 .sil-date-section > label {
   display: block;
@@ -1682,20 +1460,16 @@
   color: var(--text-muted);
   margin-bottom: 8px;
 }
-
 .sil-folder-row {
   display: flex;
   gap: 8px;
 }
-
 .sil-folder-select {
   flex: 1;
 }
-
 .sil-checkbox-row {
   margin-bottom: 12px;
 }
-
 .sil-checkbox-row label {
   display: flex;
   align-items: center;
@@ -1704,19 +1478,16 @@
   color: var(--text-normal);
   cursor: pointer;
 }
-
-.sil-checkbox-row input[type="checkbox"] {
+.sil-checkbox-row input[type=checkbox] {
   margin: 0;
   cursor: pointer;
 }
-
 .sil-date-row {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
-
 .sil-date-input {
   padding: 10px 14px;
   font-size: 14px;
@@ -1726,13 +1497,10 @@
   color: var(--text-normal);
   transition: all 0.2s ease;
 }
-
 .sil-date-input:focus {
   outline: none;
   border-color: var(--sil-accent);
 }
-
-/* Batch Progress */
 .sil-batch-progress {
   margin-top: 24px;
   padding: 20px;
@@ -1740,33 +1508,26 @@
   border-radius: var(--sil-radius-lg);
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-batch-progress h4 {
   margin-bottom: 16px;
 }
-
 .sil-batch-stats {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   margin-top: 12px;
 }
-
 .sil-stat {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-normal);
 }
-
 .sil-stat-success {
   color: var(--sil-success);
 }
-
 .sil-stat-error {
   color: var(--sil-danger);
 }
-
-/* More Cards Text */
 .sil-more-cards {
   text-align: center;
   color: var(--text-muted);
@@ -1774,8 +1535,6 @@
   margin-top: 8px;
   font-style: italic;
 }
-
-/* Button Styles */
 .sil-btn {
   padding: 10px 18px;
   font-size: 14px;
@@ -1788,29 +1547,23 @@
   transition: all 0.2s ease;
   margin-top: 12px;
 }
-
 .sil-btn:hover {
   border-color: var(--sil-accent);
 }
-
-/* ========== Manual Card Modal ========== */
 .sil-manual-card-modal {
   padding: 20px;
 }
-
 .sil-manual-card-modal h2 {
   margin: 0 0 20px 0;
   font-size: 20px;
   font-weight: 700;
   color: var(--text-normal);
 }
-
 .sil-modal-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
 .sil-modal-buttons {
   display: flex;
   justify-content: flex-end;
@@ -1819,25 +1572,20 @@
   padding-top: 16px;
   border-top: 1px solid var(--background-modifier-border);
 }
-
 .sil-btn-primary {
   background: var(--sil-gradient-1);
   border: none;
   color: white;
 }
-
 .sil-btn-primary:hover {
   box-shadow: var(--sil-shadow-md);
 }
-
-/* Settings Card Types */
 .sil-settings-card-types {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   padding: 12px 0;
 }
-
 .sil-checkbox-label {
   display: flex;
   align-items: center;
@@ -1845,27 +1593,22 @@
   font-size: 14px;
   cursor: pointer;
 }
-
 .sil-checkbox-label input {
   margin: 0;
   cursor: pointer;
 }
-
-/* ========== Study Header with Refresh ========== */
 .sil-study-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
 }
-
 .sil-study-header h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
   color: var(--text-normal);
 }
-
 .sil-refresh-btn {
   width: 36px;
   height: 36px;
@@ -1880,25 +1623,24 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .sil-refresh-btn:hover {
   border-color: var(--sil-accent);
   color: var(--sil-accent);
   transform: rotate(45deg);
 }
-
 .sil-refresh-btn.spinning {
   animation: sil-spin 0.8s linear infinite;
   border-color: var(--sil-accent);
   color: var(--sil-accent);
 }
-
 @keyframes sil-refresh-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
-/* ========== Cards Header with Delete All ========== */
 .sil-cards-header {
   display: flex;
   align-items: center;
@@ -1907,11 +1649,9 @@
   flex-wrap: wrap;
   gap: 8px;
 }
-
 .sil-cards-header h4 {
   margin: 0;
 }
-
 .sil-delete-all-btn {
   padding: 6px 12px;
   font-size: 12px;
@@ -1923,31 +1663,22 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .sil-delete-all-btn:hover {
   background: rgba(239, 68, 68, 0.2);
   border-color: var(--sil-danger);
 }
-
-/* ========== Mobile/Narrow Screen Improvements ========== */
-
-/* Make content area take full height and scroll properly */
 .sil-content {
   flex: 1;
   overflow-y: auto;
   padding: 20px;
-  padding-bottom: 80px; /* Extra padding for bottom buttons */
+  padding-bottom: 80px;
 }
-
-/* Sticky generate button at bottom */
 .sil-generate-btn {
   position: sticky;
   bottom: 0;
   z-index: 10;
   margin-top: 16px;
 }
-
-/* Rating buttons sticky at bottom during review */
 .sil-rating-section {
   position: sticky;
   bottom: 0;
@@ -1958,16 +1689,12 @@
   z-index: 10;
   border-top: 1px solid var(--background-modifier-border);
 }
-
-/* Progress section sticky at top during batch generation */
 .sil-batch-progress {
   position: sticky;
   top: 0;
   z-index: 5;
   margin-bottom: 16px;
 }
-
-/* Loading indicator more visible */
 .sil-loading {
   position: sticky;
   top: 0;
@@ -1975,261 +1702,188 @@
   background: var(--background-primary);
   border-bottom: 1px solid var(--background-modifier-border);
 }
-
-/* Smaller width responsive adjustments */
 @media (max-width: 450px) {
   .sil-header {
     padding: 12px 16px;
   }
-
   .sil-header h2 {
     font-size: 18px;
   }
-
   .sil-stats-text {
     font-size: 11px;
     padding: 4px 10px;
   }
-
   .sil-mode-selector {
     padding: 6px 8px;
     gap: 4px;
   }
-
   .sil-mode-btn {
     padding: 6px 8px;
     font-size: 11px;
     min-width: auto;
   }
-
   .sil-mode-icon {
     font-size: 14px;
   }
-
   .sil-mode-name {
     display: none;
   }
-
   .sil-content {
     padding: 12px;
     padding-bottom: 100px;
   }
-
-  /* Stats grid - 2 columns on narrow screens */
   .sil-stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
-
   .sil-stat-card {
     padding: 12px;
   }
-
   .sil-stat-value {
     font-size: 20px;
   }
-
   .sil-stat-label {
     font-size: 11px;
   }
-
-  /* Rating buttons - 2x2 grid on narrow screens */
   .sil-rating-buttons {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
-
   .sil-rating-btn {
     padding: 10px;
   }
-
   .sil-rating-label {
     font-size: 13px;
   }
-
   .sil-rating-desc {
     font-size: 10px;
   }
-
-  /* Card type checkboxes wrap */
   .sil-type-checkboxes {
     gap: 8px;
   }
-
   .sil-type-checkbox {
     padding: 8px 12px;
     font-size: 12px;
   }
-
-  /* Mode toggle buttons */
   .sil-mode-toggle {
     gap: 4px;
   }
-
   .sil-toggle-btn {
     padding: 10px 12px;
     font-size: 13px;
   }
-
-  /* Note info card */
   .sil-note-info-card {
     padding: 12px;
     gap: 10px;
   }
-
   .sil-note-icon {
     font-size: 24px;
   }
-
   .sil-note-name {
     font-size: 14px;
   }
-
   .sil-note-status {
     font-size: 11px;
     padding: 4px 8px;
   }
-
-  /* Generate button */
   .sil-generate-btn {
     padding: 14px 16px;
     font-size: 14px;
   }
-
-  /* Card question */
   .sil-card-question {
     font-size: 16px;
     margin-bottom: 16px;
   }
-
-  /* MCQ options */
   .sil-option {
     padding: 12px 14px;
     font-size: 14px;
   }
-
-  /* Submit button */
   .sil-submit-btn {
     padding: 12px;
     font-size: 14px;
   }
-
-  /* Provider cards in settings */
   .sil-provider {
     padding: 12px;
   }
-
   .sil-provider-header {
     font-size: 13px;
   }
-
   .sil-provider input {
     padding: 10px 12px;
     font-size: 13px;
   }
-
   .sil-provider-actions {
     flex-direction: column;
   }
-
   .sil-provider-actions button {
     width: 100%;
     padding: 8px 12px;
   }
-
-  /* Footer */
   .sil-footer {
     padding: 10px 12px;
     font-size: 11px;
   }
-
-  /* Batch progress stats */
   .sil-batch-stats {
     flex-direction: column;
     gap: 4px;
   }
-
-  /* Date inputs */
   .sil-date-row {
     flex-direction: column;
     gap: 8px;
   }
-
   .sil-date-input {
     width: 100%;
   }
-
-  /* Count section */
   .sil-count-section {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-
   .sil-count-select {
     width: 100%;
   }
-
-  /* Folder select */
   .sil-folder-select {
     font-size: 13px;
   }
-
-  /* Card list items */
   .sil-card-item {
     padding: 8px 10px;
   }
-
   .sil-card-preview {
     font-size: 12px;
   }
-
-  /* Welcome section */
   .sil-quick-actions {
     flex-direction: column;
     gap: 8px;
   }
-
   .sil-action-btn {
     width: 100%;
     justify-content: center;
   }
 }
-
-/* Very narrow screens (< 350px) */
 @media (max-width: 350px) {
   .sil-mode-selector {
     flex-wrap: wrap;
   }
-
   .sil-mode-btn {
     flex: 1 1 40%;
   }
-
   .sil-stats-grid {
     grid-template-columns: 1fr;
   }
-
   .sil-type-checkboxes {
     flex-direction: column;
   }
-
   .sil-type-checkbox {
     width: 100%;
   }
 }
-
-/* ========== Compact Modal (ManualCardModal & DeleteCardsModal) ========== */
 .modal.sil-compact-modal {
   max-width: 420px;
   width: 90vw;
 }
-
 .modal.sil-compact-modal .modal-content {
   padding: 0;
 }
-
-/* Modal Header Row */
 .sil-modal-header-row {
   display: flex;
   align-items: center;
@@ -2239,15 +1893,12 @@
   border-bottom: 1px solid var(--background-modifier-border);
   background: var(--background-secondary);
 }
-
 .sil-modal-header-row h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
   color: var(--text-normal);
 }
-
-/* Compact Type Selector */
 .sil-type-select-compact {
   padding: 6px 10px;
   font-size: 13px;
@@ -2257,31 +1908,25 @@
   color: var(--text-normal);
   cursor: pointer;
 }
-
 .sil-type-select-compact:hover {
   border-color: var(--sil-accent);
 }
-
-/* Compact Form */
 .sil-modal-form-compact {
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .sil-form-row {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
 .sil-form-row > label {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
 }
-
 .sil-input-compact {
   width: 100%;
   padding: 8px 12px;
@@ -2293,17 +1938,13 @@
   resize: vertical;
   min-height: 36px;
 }
-
 .sil-input-compact:focus {
   outline: none;
   border-color: var(--sil-accent);
 }
-
-/* Compact MCQ Section */
 .sil-mcq-compact {
   padding-top: 8px;
 }
-
 .sil-mcq-compact > label {
   font-size: 12px;
   font-weight: 600;
@@ -2311,25 +1952,21 @@
   display: block;
   margin-bottom: 8px;
 }
-
 .sil-options-grid {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-
 .sil-option-row-compact {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-
-.sil-option-row-compact input[type="checkbox"] {
+.sil-option-row-compact input[type=checkbox] {
   margin: 0;
   cursor: pointer;
   flex-shrink: 0;
 }
-
 .sil-option-input-compact {
   flex: 1;
   padding: 6px 10px;
@@ -2339,13 +1976,10 @@
   background: var(--background-primary);
   color: var(--text-normal);
 }
-
 .sil-option-input-compact:focus {
   outline: none;
   border-color: var(--sil-accent);
 }
-
-/* Compact Modal Buttons */
 .sil-modal-buttons-compact {
   display: flex;
   justify-content: flex-end;
@@ -2354,7 +1988,6 @@
   border-top: 1px solid var(--background-modifier-border);
   background: var(--background-secondary);
 }
-
 .sil-btn-compact {
   padding: 8px 16px;
   font-size: 13px;
@@ -2366,60 +1999,48 @@
   color: var(--text-normal);
   transition: all 0.15s ease;
 }
-
 .sil-btn-compact:hover {
   border-color: var(--sil-accent);
 }
-
 .sil-btn-primary-compact {
   background: var(--sil-accent);
   border-color: var(--sil-accent);
   color: white;
 }
-
 .sil-btn-primary-compact:hover {
   background: var(--sil-accent-hover);
   border-color: var(--sil-accent-hover);
 }
-
 .sil-btn-danger {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.4);
   color: var(--sil-danger);
 }
-
 .sil-btn-danger:hover {
   background: var(--sil-danger);
   border-color: var(--sil-danger);
   color: white;
 }
-
-/* ========== Delete Cards Modal ========== */
 .sil-delete-modal {
   padding: 0;
 }
-
 .sil-delete-modal-header {
   padding: 16px 20px;
   border-bottom: 1px solid var(--background-modifier-border);
   background: var(--background-secondary);
 }
-
 .sil-delete-modal-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
   color: var(--text-normal);
 }
-
-/* Mode Selection */
 .sil-delete-mode-section {
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 .sil-delete-mode-option {
   display: flex;
   align-items: flex-start;
@@ -2430,46 +2051,37 @@
   cursor: pointer;
   transition: all 0.15s ease;
 }
-
 .sil-delete-mode-option:hover {
   border-color: var(--sil-accent);
   background: rgba(99, 102, 241, 0.03);
 }
-
-.sil-delete-mode-option input[type="radio"] {
+.sil-delete-mode-option input[type=radio] {
   margin: 2px 0 0 0;
   cursor: pointer;
   flex-shrink: 0;
 }
-
 .sil-delete-mode-label {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-
 .sil-delete-mode-label strong {
   font-size: 14px;
   color: var(--text-normal);
 }
-
 .sil-delete-mode-desc {
   font-size: 12px;
   color: var(--text-muted);
 }
-
-/* Filter Section */
 .sil-delete-filter-section {
   padding: 0 20px 16px;
 }
-
 .sil-filter-option {
   padding: 12px;
   background: var(--background-secondary);
   border-radius: var(--sil-radius-sm);
   border: 1px solid var(--background-modifier-border);
 }
-
 .sil-filter-option > label {
   display: block;
   font-size: 12px;
@@ -2477,7 +2089,6 @@
   color: var(--text-muted);
   margin-bottom: 8px;
 }
-
 .sil-select-compact {
   width: 100%;
   padding: 8px 12px;
@@ -2488,20 +2099,16 @@
   color: var(--text-normal);
   cursor: pointer;
 }
-
 .sil-select-compact:focus {
   outline: none;
   border-color: var(--sil-accent);
 }
-
-/* Date Filter Row */
 .sil-date-filter-row {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
-
 .sil-date-input-compact {
   flex: 1;
   min-width: 120px;
@@ -2512,17 +2119,13 @@
   background: var(--background-primary);
   color: var(--text-normal);
 }
-
 .sil-date-input-compact:focus {
   outline: none;
   border-color: var(--sil-accent);
 }
-
-/* Preview Section */
 .sil-delete-preview {
   padding: 0 20px 12px;
 }
-
 .sil-preview-count {
   padding: 10px 14px;
   background: rgba(239, 68, 68, 0.08);
@@ -2531,33 +2134,26 @@
   font-size: 14px;
   color: var(--text-normal);
 }
-
 .sil-preview-number {
   font-size: 18px;
   font-weight: 700;
   color: var(--sil-danger);
 }
-
 .sil-preview-empty {
   color: var(--text-muted);
   font-style: italic;
 }
-
-/* Warning */
 .sil-delete-warning {
   padding: 0 20px 16px;
   text-align: center;
   font-size: 12px;
   color: var(--sil-warning);
 }
-
-/* Action Button Danger Variant */
 .sil-action-btn.danger {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.3);
   color: var(--sil-danger);
 }
-
 .sil-action-btn.danger:hover {
   background: rgba(239, 68, 68, 0.2);
   border-color: var(--sil-danger);

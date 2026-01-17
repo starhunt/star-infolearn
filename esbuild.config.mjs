@@ -1,6 +1,7 @@
 import esbuild from "esbuild";
 import process from "process";
 import builtinModules from "builtin-modules";
+import fs from "fs";
 
 const banner =
 `/*
@@ -10,6 +11,19 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = (process.argv[2] === 'production');
+
+// Plugin to rename main.css to styles.css (Obsidian convention)
+const renameCSS = {
+  name: 'rename-css',
+  setup(build) {
+    build.onEnd(() => {
+      if (fs.existsSync('main.css')) {
+        fs.renameSync('main.css', 'styles.css');
+      }
+    });
+  },
+};
+
 const options = {
   banner: {
     js: banner,
@@ -37,6 +51,7 @@ const options = {
   sourcemap: prod ? false : 'inline',
   treeShaking: true,
   outfile: 'main.js',
+  plugins: [renameCSS],
 };
 
 if (prod) {
