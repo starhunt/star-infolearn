@@ -4,6 +4,7 @@
 
 import axios, { AxiosInstance } from 'axios';
 import { AIProvider, AIProviderConfig, AIResponse, AIServiceConfig, KeywordIdentificationResult, RewritingOptions } from '../types/ai';
+import { AIServiceError, ProviderNotConfiguredError, ApiKeyNotSetError, RateLimitError, isAxiosError } from '../types/errors';
 
 export class AIService {
   private config: AIServiceConfig;
@@ -68,17 +69,13 @@ export class AIService {
     switch (provider) {
       case 'openai':
       case 'grok':
+      case 'gemini':
+      case 'zhipu':
         headers['Authorization'] = `Bearer ${config.apiKey}`;
         break;
       case 'anthropic':
         headers['x-api-key'] = config.apiKey;
         headers['anthropic-version'] = '2023-06-01';
-        break;
-      case 'gemini':
-        // Gemini uses query parameter, will be added in request
-        break;
-      case 'zhipu':
-        headers['Authorization'] = `Bearer ${config.apiKey}`;
         break;
     }
 
@@ -90,10 +87,10 @@ export class AIService {
    */
   setProvider(provider: AIProvider): void {
     if (!this.config.providers[provider]) {
-      throw new Error(`Provider ${provider} not configured`);
+      throw new ProviderNotConfiguredError(provider);
     }
     if (!this.config.providers[provider].apiKey) {
-      throw new Error(`API key not set for ${provider}`);
+      throw new ApiKeyNotSetError(provider);
     }
     this.currentProvider = provider;
   }
@@ -140,14 +137,11 @@ export class AIService {
           break;
           
         case 'gemini':
-          await axios.post(
-            `${config.baseUrl || this.getDefaultBaseURL(provider)}/chat/completions?key=${config.apiKey}`,
-            {
-              model: config.model,
-              messages: [{ role: 'user', content: testPrompt }],
-              max_tokens: 10,
-            }
-          );
+          await testInstance.post('/chat/completions', {
+            model: config.model,
+            messages: [{ role: 'user', content: testPrompt }],
+            max_tokens: 10,
+          });
           break;
           
         case 'zhipu':
@@ -172,7 +166,7 @@ export class AIService {
   async identifyKeywords(text: string, bounds: { x: number; y: number; width: number; height: number }[]): Promise<KeywordIdentificationResult[]> {
     const config = this.config.providers[this.currentProvider];
     if (!config) {
-      throw new Error(`Provider ${this.currentProvider} not configured`);
+      throw new ProviderNotConfiguredError(this.currentProvider);
     }
 
     const prompt = `Analyze the following text and identify 5-10 key learning keywords that would be good for a fill-in-the-blank exercise. Return a JSON array with objects containing: keyword, importance (0-1).
@@ -186,14 +180,16 @@ Return ONLY valid JSON array, no markdown formatting, no code blocks.`;
       const keywords = JSON.parse(response);
 
       // Map keywords to bounds
-      return keywords.map((kw: any, index: number) => ({
+      return keywords.map((kw: { keyword: string; importance?: number }, index: number) => ({
         keyword: kw.keyword,
         bounds: bounds[index % bounds.length],
         importance: kw.importance || 0.5,
       }));
     } catch (error) {
-      console.error('Error identifying keywords:', error);
-      throw error;
+      if (error instanceof AIServiceError) {
+        throw error;
+      }
+      throw AIServiceError.fromAxiosError(this.currentProvider, error);
     }
   }
 
@@ -203,7 +199,7 @@ Return ONLY valid JSON array, no markdown formatting, no code blocks.`;
   async rewriteContent(text: string, options: RewritingOptions): Promise<string> {
     const config = this.config.providers[this.currentProvider];
     if (!config) {
-      throw new Error(`Provider ${this.currentProvider} not configured`);
+      throw new ProviderNotConfiguredError(this.currentProvider);
     }
 
     const stylePrompts: Record<string, string> = {
@@ -224,8 +220,10 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
     try {
       return await this.callAI(prompt);
     } catch (error) {
-      console.error('Error rewriting content:', error);
-      throw error;
+      if (error instanceof AIServiceError) {
+        throw error;
+      }
+      throw AIServiceError.fromAxiosError(this.currentProvider, error);
     }
   }
 
@@ -235,7 +233,7 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
   private async callAI(prompt: string): Promise<string> {
     const config = this.config.providers[this.currentProvider];
     if (!config) {
-      throw new Error(`Provider ${this.currentProvider} not configured`);
+      throw new ProviderNotConfiguredError(this.currentProvider);
     }
 
     try {
@@ -250,11 +248,23 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
         case 'zhipu':
           return await this.callZhipu(config, prompt);
         default:
-          throw new Error(`Unknown provider: ${this.currentProvider}`);
+          throw new AIServiceError(
+            `Unknown provider: ${this.currentProvider}`,
+            this.currentProvider
+          );
       }
     } catch (error) {
-      console.error(`Error calling ${this.currentProvider}:`, error);
-      throw error;
+      if (error instanceof AIServiceError) {
+        throw error;
+      }
+
+      // Check for rate limit error
+      if (isAxiosError(error) && error.response?.status === 429) {
+        const retryAfter = parseInt(error.response?.data?.retry_after || '60', 10);
+        throw new RateLimitError(this.currentProvider, retryAfter);
+      }
+
+      throw AIServiceError.fromAxiosError(this.currentProvider, error);
     }
   }
 
@@ -296,18 +306,20 @@ ${options.maxLength ? `Keep the response under ${options.maxLength} characters.`
   }
 
   /**
-   * Call Google Gemini API
+   * Call Google Gemini API (OpenAI-compatible endpoint)
    */
   private async callGemini(config: AIProviderConfig, prompt: string): Promise<string> {
-    const response = await axios.post(
-      `${config.baseUrl || this.getDefaultBaseURL('gemini')}/chat/completions?key=${config.apiKey}`,
-      {
-        model: config.model,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 1000,
-      }
-    );
+    const instance = this.axiosInstances['gemini'];
+    if (!instance) {
+      throw new Error('Gemini instance not initialized');
+    }
+
+    const response = await instance.post('/chat/completions', {
+      model: config.model,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
 
     return response.data.choices[0].message.content;
   }

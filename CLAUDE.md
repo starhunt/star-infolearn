@@ -78,18 +78,27 @@ Zustand 스토어 (`src/store/appStore.ts`)가 관리하는 상태:
    - `callAI()` switch 문에 호출 메서드 추가
 3. `main.ts`: `DEFAULT_SETTINGS.providers`에 기본 설정 추가
 
+## 에러 처리
+
+커스텀 에러 타입이 `src/types/errors.ts`에 정의되어 있습니다:
+- `AIServiceError`: AI API 호출 실패
+- `ProviderNotConfiguredError`: 제공자 미설정
+- `ApiKeyNotSetError`: API 키 미설정
+- `RateLimitError`: 레이트 제한 초과
+- `TextExtractionError`: 텍스트 추출 실패
+- `DataServiceError`: 데이터 저장/로드 실패
+
 ## 알려진 이슈 및 개선 필요사항
 
-### 긴급
-- **TextExtractorService**: PDF/이미지 추출이 목업만 존재, 실제 구현 필요 (PDF.js, Tesseract.js)
-- **Gemini 보안**: API 키가 URL 쿼리 파라미터로 전송됨 - Authorization 헤더로 변경 권장
+### 완료됨
+- ~~Gemini API 키가 URL 쿼리 파라미터로 전송~~ → Authorization 헤더로 변경 완료
+- ~~TypeScript strict 모드 미활성화~~ → strict 모드 활성화 완료
+- ~~에러 타입 정의 부재~~ → 커스텀 에러 타입 추가 완료
+- ~~TextExtractorService 목업만 존재~~ → PDF.js 기반 실제 구현 완료
 
-### 중요
+### 진행 중
+- 이미지 OCR 기능 미구현 (Tesseract.js 또는 외부 API 연동 필요)
 - 테스트 파일 없음 (Jest 설정은 있음)
-- TypeScript strict 모드 미활성화
-- API 응답 검증 및 에러 타입 정의 부재
-- 레이트 제한 처리 없음
 
 ### 참고
-- `react`, `react-dom` 의존성이 있으나 실제로는 사용 안함 (JSX는 TypeScript가 처리)
-- `pdf-parse` 의존성 있으나 미사용
+- 의존성이 업데이트됨 (TypeScript 5.3, esbuild 0.20 등)
