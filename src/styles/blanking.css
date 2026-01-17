@@ -1,0 +1,355 @@
+/* Blanking Feature Styles */
+
+.blanking-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--background-primary);
+}
+
+.blanking-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--background-tertiary);
+  background-color: var(--background-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blanking-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.blanking-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.blanking-stats .stat {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.blanking-stats .stat.correct {
+  background-color: rgba(144, 238, 144, 0.2);
+  color: #22a622;
+}
+
+.blanking-stats .stat.incorrect {
+  background-color: rgba(255, 99, 71, 0.2);
+  color: #dc143c;
+}
+
+.blanking-stats .stat.unanswered {
+  background-color: rgba(173, 216, 230, 0.2);
+  color: var(--text-muted);
+}
+
+.blanking-content {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.blanking-image-container {
+  flex: 2;
+  position: relative;
+  border: 1px solid var(--background-tertiary);
+  border-radius: 6px;
+  overflow: auto;
+  background-color: var(--background-secondary);
+}
+
+.blanking-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.blanking-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.blank-rect {
+  fill: rgba(255, 255, 0, 0.15);
+  stroke: rgba(255, 165, 0, 0.5);
+  stroke-width: 2;
+  stroke-dasharray: 5, 5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.blank-rect:hover {
+  fill: rgba(255, 255, 0, 0.3);
+  stroke: rgba(255, 165, 0, 0.8);
+  stroke-width: 2.5;
+}
+
+.blank-rect.active {
+  fill: rgba(255, 200, 0, 0.4);
+  stroke: rgba(255, 140, 0, 1);
+  stroke-width: 3;
+}
+
+.blank-rect.correct {
+  fill: rgba(144, 238, 144, 0.3);
+  stroke: rgba(34, 139, 34, 0.8);
+  stroke-dasharray: none;
+}
+
+.blank-rect.incorrect {
+  fill: rgba(255, 99, 71, 0.3);
+  stroke: rgba(220, 20, 60, 0.8);
+  stroke-dasharray: none;
+}
+
+.blank-number {
+  font-size: 14px;
+  font-weight: bold;
+  fill: rgba(0, 0, 0, 0.7);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  user-select: none;
+}
+
+.blanking-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid var(--background-tertiary);
+  border-radius: 6px;
+  padding: 12px;
+  background-color: var(--background-secondary);
+  overflow-y: auto;
+}
+
+.blanking-instructions {
+  padding: 8px;
+  background-color: rgba(173, 216, 230, 0.1);
+  border-left: 3px solid var(--interactive-accent);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.blanking-instructions p {
+  margin: 0;
+}
+
+.blanking-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background-color: var(--background-tertiary);
+  border-radius: 4px;
+}
+
+.blank-question {
+  font-size: 12px;
+}
+
+.blank-question strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-normal);
+}
+
+.blank-question p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.blank-question em {
+  color: var(--interactive-accent);
+  font-style: normal;
+  font-weight: 500;
+}
+
+.blank-input-group {
+  display: flex;
+  gap: 6px;
+}
+
+.blank-input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--background-secondary-alt);
+  border-radius: 4px;
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  font-size: 12px;
+  outline: none;
+}
+
+.blank-input:focus {
+  border-color: var(--interactive-accent);
+  box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.1);
+}
+
+.blank-submit-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--interactive-accent);
+  border-radius: 4px;
+  background-color: var(--interactive-accent);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.blank-submit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.blank-submit-btn:active {
+  transform: translateY(0);
+}
+
+.blank-feedback {
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.blank-feedback.correct {
+  background-color: rgba(144, 238, 144, 0.2);
+  border-left: 3px solid #22a622;
+  color: #22a622;
+}
+
+.blank-feedback.correct strong {
+  color: #22a622;
+}
+
+.blank-feedback.incorrect {
+  background-color: rgba(255, 99, 71, 0.2);
+  border-left: 3px solid #dc143c;
+  color: #dc143c;
+}
+
+.blank-feedback.incorrect strong {
+  color: #dc143c;
+}
+
+.blank-feedback p {
+  margin: 4px 0 0 0;
+}
+
+.blanking-complete-btn,
+.blanking-reset-btn {
+  padding: 8px 12px;
+  border: 1px solid var(--background-tertiary);
+  border-radius: 4px;
+  background-color: var(--background-secondary);
+  color: var(--text-normal);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.blanking-complete-btn:hover:not(:disabled),
+.blanking-reset-btn:hover {
+  background-color: var(--background-tertiary);
+}
+
+.blanking-complete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.blanking-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.blanking-results h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.results-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.result-item {
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.result-item.correct {
+  background-color: rgba(144, 238, 144, 0.2);
+  color: #22a622;
+}
+
+.result-item.incorrect {
+  background-color: rgba(255, 99, 71, 0.2);
+  color: #dc143c;
+}
+
+.result-item.unanswered {
+  background-color: rgba(173, 216, 230, 0.2);
+  color: var(--text-muted);
+}
+
+.result-item .label {
+  font-weight: 500;
+}
+
+.result-item .value {
+  font-weight: 600;
+}
+
+.accuracy-bar {
+  position: relative;
+  height: 24px;
+  background-color: var(--background-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--background-secondary-alt);
+}
+
+.accuracy-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22a622, #90ee90);
+  transition: width 0.3s ease;
+}
+
+.accuracy-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-normal);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
