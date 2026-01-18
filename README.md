@@ -1,257 +1,165 @@
-# InfoLearn Pro - Advanced Infographic Learning Tool for Obsidian
+# Star InfoLearn
+
+Obsidian을 위한 AI 기반 플래시카드 학습 플러그인
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Obsidian-purple)
 
-## 📚 Overview
+<p align="center">
+  <img src="docs/images/dashboard.png" width="280" alt="대시보드">
+  <img src="docs/images/review.png" width="280" alt="복습">
+  <img src="docs/images/create.png" width="280" alt="카드 생성">
+</p>
 
-InfoLearn Pro is an innovative Obsidian plugin that revolutionizes how you learn from infographics and technical documents. It combines AI-powered analysis with interactive learning techniques to dramatically improve information retention and comprehension.
+## 주요 기능
 
-### Key Features
+- **AI 자동 카드 생성** - 노트 내용을 기반으로 플래시카드 자동 생성
+- **4가지 퀴즈 유형** - 플래시카드, 객관식, 빈칸 채우기, 단답형
+- **FSRS 간격 반복** - 과학적인 복습 스케줄링 알고리즘
+- **복습 필터** - 노트별, 폴더별, 기간별 복습 범위 선택
+- **학습 대시보드** - 통계 및 진행 상황 확인
 
-- **📝 Blanking Mode**: Interactive fill-in-the-blank exercises with AI-powered keyword identification
-- **✏️ Rewriting Mode**: Rewrite content in 6 different styles (Summary, Detailed, Beginner, Expert, Story, Report)
-- **🔗 Association Mode**: Build knowledge graphs by creating meaningful connections between concepts
-- **🤖 Multi-AI Support**: OpenAI, Anthropic, Gemini, Grok, Zhipu GLM-4.7
+## 지원 AI 제공자
 
-## 🚀 Installation
+| 제공자 | 모델 예시 |
+|--------|----------|
+| OpenAI | GPT-4, GPT-3.5 |
+| Anthropic | Claude 3 |
+| Google Gemini | Gemini Pro |
+| Grok | Grok-1 |
+| Zhipu | GLM-4 |
 
-### From Obsidian Community Plugins
-1. Open Obsidian Settings
-2. Go to Community Plugins
-3. Search for "InfoLearn Pro"
-4. Click Install
+## 설치 방법
 
-### Manual Installation
-1. Download the latest release from GitHub
-2. Extract to `.obsidian/plugins/infolearn-pro/`
-3. Reload Obsidian
-4. Enable the plugin in Settings
+### BRAT을 사용한 설치 (권장)
 
-## 🎯 Getting Started
+[BRAT (Beta Reviewers Auto-update Tester)](https://github.com/TfTHacker/obsidian42-brat)을 사용하면 GitHub에서 직접 플러그인을 설치하고 자동 업데이트를 받을 수 있습니다.
 
-### 1. Configure AI Providers
+#### 1. BRAT 플러그인 설치
 
-1. Open InfoLearn Pro settings
-2. Select your preferred AI provider
-3. Enter your API key
-4. Click "Test Connection" to verify
+1. Obsidian 설정 열기
+2. **커뮤니티 플러그인** → **찾아보기** 클릭
+3. "BRAT" 검색 후 설치
+4. BRAT 플러그인 활성화
 
-**Supported Providers:**
-- **OpenAI**: GPT-4 Turbo, GPT-4, GPT-3.5 Turbo
-- **Anthropic**: Claude 3 Opus, Sonnet, Haiku
-- **Google Gemini**: Gemini 2.0 Flash, Pro, Ultra
-- **xAI Grok**: Grok-3, Grok-2, Grok-1
-- **Zhipu GLM**: GLM-4.7 (코딩플랜), GLM-4, GLM-3
+#### 2. Star InfoLearn 추가
 
-### 2. Use Blanking Mode
+1. 명령어 팔레트 열기 (`Ctrl/Cmd + P`)
+2. **"BRAT: Add a beta plugin for testing"** 입력 및 선택
+3. 저장소 URL 입력:
+   ```
+   starhunt/star-infolearn
+   ```
+4. **Add Plugin** 클릭
 
-1. Select text from your infographic or document
-2. Click "Blanking" mode
-3. AI automatically identifies key terms
-4. Fill in the blanks and get instant feedback
-5. Track your accuracy and progress
+#### 3. 플러그인 활성화
 
-### 3. Use Rewriting Mode
+1. 설정 → 커뮤니티 플러그인
+2. **Star InfoLearn** 활성화
+3. 사이드바에서 Star InfoLearn 아이콘 클릭
 
-1. Select text you want to rewrite
-2. Click "Rewriting" mode
-3. Choose from 6 different writing styles
-4. Compare original and rewritten versions
-5. Copy your preferred version
+### 수동 설치
 
-### 4. Use Association Mode
+1. [최신 릴리즈](https://github.com/starhunt/star-infolearn/releases/latest)에서 다운로드:
+   - `main.js`
+   - `styles.css`
+   - `manifest.json`
 
-1. Click "Association" mode
-2. Create new links between concepts
-3. Define relationship types (related, causes, explains, example, contrast)
-4. Build your knowledge graph
-5. Visualize connections
+2. Obsidian vault의 `.obsidian/plugins/star-infolearn/` 폴더 생성 후 파일 복사
 
-## 🏗️ Architecture
+3. Obsidian 재시작 또는 새로고침 (`Ctrl/Cmd + R`)
 
-### Project Structure
+4. 설정 → 커뮤니티 플러그인 → Star InfoLearn 활성화
+
+## 사용법
+
+### 1. AI 설정
+
+1. Star InfoLearn 패널 열기 (사이드바 아이콘)
+2. **설정** 탭 선택
+3. AI 제공자 선택 및 API 키 입력
+4. **연결 테스트**로 확인
+
+### 2. 카드 생성
+
+#### AI 자동 생성 (현재 노트)
+
+1. 학습할 노트 열기
+2. **생성** 탭 → **현재 노트** 모드 선택
+3. 생성할 카드 유형 선택 (플래시카드, 객관식 등)
+4. 유형당 카드 수 설정
+5. **카드 생성하기** 클릭
+
+#### 일괄 생성
+
+1. **생성** 탭 → **일괄 생성** 모드 선택
+2. 폴더 선택 및 옵션 설정
+3. **일괄 생성 시작** 클릭
+
+#### 수동 생성
+
+1. **수동으로 카드 만들기** 클릭
+2. 카드 유형, 질문, 정답 입력
+3. **카드 생성** 클릭
+
+### 3. 복습
+
+1. **복습** 탭 선택
+2. 복습 범위 선택:
+   - **전체** - 모든 복습 카드
+   - **현재 노트** - 현재 열린 노트의 카드만
+   - **폴더 선택** - 특정 폴더의 카드만
+   - **기간 선택** - 특정 기간에 생성된 카드만
+3. **복습 시작** 클릭
+4. 카드별로 평가 (Again / Hard / Good / Easy)
+
+### 4. 대시보드
+
+**학습** 탭에서 확인:
+
+- 전체 카드 수
+- 오늘 복습 예정
+- 새 카드 / 복습 중 카드
+- 최근 생성된 카드 목록
+- 빠른 실행 버튼
+
+## 데이터 저장 위치
+
+모든 학습 데이터는 로컬에 저장됩니다:
 
 ```
-src/
-├── types/
-│   ├── ai.ts                    # AI service types
-│   ├── blanking.ts              # Blanking feature types
-│   ├── rewriting.ts             # Rewriting feature types
-│   └── association.ts           # Association feature types
-├── services/
-│   ├── AIService.ts             # Multi-AI provider support
-│   ├── DataService.ts           # Local data persistence
-│   ├── TextExtractorService.ts  # Text extraction from PDFs/images
-│   ├── BlankingService.ts       # Blanking feature logic
-│   ├── RewritingService.ts      # Rewriting feature logic
-│   └── AssociationService.ts    # Association feature logic
-├── ui/
-│   ├── MainContainer.tsx        # Main UI orchestrator
-│   ├── BlankingView.tsx         # Blanking UI component
-│   ├── RewritingView.tsx        # Rewriting UI component
-│   ├── AssociationView.tsx      # Association UI component
-│   ├── AISettingsPanel.tsx      # Settings UI component
-│   └── InfoLearnView.ts         # Obsidian view integration
-├── store/
-│   └── appStore.ts              # Zustand global state management
-└── styles/
-    ├── main.css                 # Main container styles
-    ├── blanking.css             # Blanking feature styles
-    ├── rewriting.css            # Rewriting feature styles
-    ├── association.css          # Association feature styles
-    └── settings.css             # Settings panel styles
+.obsidian/plugins/star-infolearn/data/
+├── cards/     # 학습 카드 (JSON)
+├── decks/     # 덱/컬렉션
+├── logs/      # 복습 로그
+└── stats/     # 일일 통계
 ```
 
-### Technology Stack
+## 문제 해결
 
-- **Language**: TypeScript
-- **Build Tool**: esbuild
-- **State Management**: Zustand
-- **UI Framework**: React (optional, for future web version)
-- **API Integration**: Axios
-- **Data Storage**: Obsidian Vault
+### 플러그인이 로드되지 않을 때
 
-## 🔧 Development
+1. Obsidian 버전 확인 (0.15.0 이상 필요)
+2. 플러그인 활성화 상태 확인
+3. Obsidian 새로고침 (`Ctrl/Cmd + R`)
 
-### Prerequisites
+### AI 연결 실패
 
-- Node.js 16+
-- npm or pnpm
-- Obsidian 0.15.0+
+1. API 키 확인
+2. 인터넷 연결 확인
+3. API 크레딧 잔액 확인
+4. 설정에서 연결 테스트 실행
 
-### Setup
+## 라이선스
 
-```bash
-# Install dependencies
-npm install
+MIT License
 
-# Build plugin
-npm run build
+## 문의 및 기여
 
-# Development mode (watch)
-npm run dev
-```
-
-### Project Configuration
-
-- **TypeScript**: `tsconfig.json`
-- **Build**: `esbuild.config.mjs`
-- **Manifest**: `manifest.json`
-- **Package**: `package.json`
-
-## 📊 Features in Detail
-
-### Blanking Mode
-
-- **AI Keyword Identification**: Automatically identifies 5-10 key learning terms
-- **Interactive Quiz**: Fill-in-the-blank exercises with real-time validation
-- **Progress Tracking**: Accuracy percentage and detailed feedback
-- **Spaced Repetition**: Automatic scheduling for optimal retention
-
-### Rewriting Mode
-
-- **6 Writing Styles**:
-  - 📋 Summary: Concise 2-3 sentence overview
-  - 📚 Detailed: Comprehensive explanation with examples
-  - 🌱 Beginner: Simple terms for beginners
-  - 🎓 Expert: Advanced analysis and insights
-  - 📖 Story: Engaging narrative format
-  - 📊 Report: Professional business format
-
-- **Readability Analysis**: Automatic readability score calculation
-- **Keyword Preservation**: Ensures important terms are maintained
-- **Side-by-side Comparison**: View original and rewritten versions
-
-### Association Mode
-
-- **Relationship Types**:
-  - 🔗 Related: General relationship
-  - → Causes: Causal relationship
-  - 💡 Explains: Definitional relationship
-  - 📝 Example: Exemplification
-  - ⚖️ Contrast: Contrasting relationship
-
-- **Knowledge Graph**: Visualize concept connections
-- **Strength Metrics**: Measure relationship strength (0-1)
-- **Statistics**: Total links, unique notes, average strength, graph density
-
-## 🔐 Privacy & Security
-
-- **Local Storage**: All data stored locally in Obsidian vault
-- **No Cloud Sync**: Your data never leaves your device
-- **API Key Encryption**: API keys encrypted and stored securely
-- **Optional AI**: All features work with mock data if no API configured
-
-## 📈 Performance
-
-- **Build Size**: ~107KB (minified and bundled)
-- **Memory Usage**: Minimal (~20-30MB)
-- **Load Time**: < 1 second
-- **Response Time**: < 2 seconds (with AI API)
-
-## 🐛 Troubleshooting
-
-### Plugin Not Loading
-
-1. Check Obsidian version (requires 0.15.0+)
-2. Verify plugin is enabled in Settings
-3. Reload Obsidian (Ctrl+R or Cmd+R)
-
-### AI Connection Failed
-
-1. Verify API key is correct
-2. Check internet connection
-3. Ensure API key has sufficient credits
-4. Test connection in Settings
-
-### Slow Performance
-
-1. Clear Obsidian cache
-2. Disable other plugins temporarily
-3. Check system resources
-4. Update to latest version
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Submit a pull request
-
-## 📝 License
-
-MIT License - See LICENSE file for details
-
-## 🙏 Acknowledgments
-
-- Obsidian team for the excellent plugin API
-- AI providers (OpenAI, Anthropic, Google, xAI, Zhipu)
-- Community feedback and suggestions
-
-## 📧 Support
-
-For issues, feature requests, or questions:
-
-- GitHub Issues: https://github.com/infolearn-pro/issues
-- Email: support@infolearn-pro.com
-- Discord: https://discord.gg/infolearn-pro
-
-## 🗺️ Roadmap
-
-- [ ] Real-time collaboration
-- [ ] Custom AI model support
-- [ ] Advanced analytics dashboard
-- [ ] Mobile app (iOS/Android)
-- [ ] Browser extension
-- [ ] API for third-party integrations
-- [ ] Offline mode with local LLM
-- [ ] Multi-language support
+- 이슈: [GitHub Issues](https://github.com/starhunt/star-infolearn/issues)
+- PR 환영합니다!
 
 ---
 
-**InfoLearn Pro** - Making learning from infographics smarter and more effective! 🚀
+**Star InfoLearn** - 노트를 플래시카드로, 학습을 더 효과적으로!

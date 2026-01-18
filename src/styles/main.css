@@ -295,18 +295,18 @@
 
 .sil-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .sil-stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 16px;
+  padding: 12px 10px;
   background: var(--background-secondary);
-  border-radius: var(--sil-radius-lg);
+  border-radius: var(--sil-radius-md);
   border: 1px solid var(--background-modifier-border);
   transition: all 0.25s ease;
 }
@@ -323,28 +323,28 @@
 .sil-stat-card:nth-child(4) { border-top: 3px solid #f59e0b; }
 
 .sil-stat-icon {
-  font-size: 28px;
-  margin-bottom: 8px;
+  font-size: 20px;
+  margin-bottom: 4px;
 }
 
 .sil-stat-value {
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--text-normal);
   line-height: 1;
 }
 
 .sil-stat-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 8px;
+  letter-spacing: 0.3px;
+  margin-top: 4px;
 }
 
 .sil-actions-section {
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 
 .sil-action-grid {
@@ -2333,6 +2333,13 @@
   color: var(--text-normal);
   resize: vertical;
   min-height: 36px;
+}
+
+/* Textarea in manual card modal - compact height */
+textarea.sil-input-compact {
+  height: 60px;
+  min-height: 60px;
+  max-height: 100px;
 }
 
 .sil-input-compact:focus {
