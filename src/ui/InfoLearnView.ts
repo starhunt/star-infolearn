@@ -32,6 +32,13 @@ export class InfoLearnView extends ItemView {
   private shuffledOptionsCache: Map<string, { id: string; text: string; isCorrect: boolean }[]> = new Map();
   // Store shuffled blanks order per card
   private shuffledBlanksCache: Map<string, { originalIndex: number; position: number; answer: string }[]> = new Map();
+  // Review filter state
+  private reviewFilter: {
+    mode: 'all' | 'current-note' | 'folder' | 'date-range';
+    folderPath?: string;
+    dateFrom?: string;
+    dateTo?: string;
+  } = { mode: 'all' };
 
   constructor(leaf: WorkspaceLeaf, plugin: StarInfoLearn) {
     super(leaf);
@@ -368,9 +375,124 @@ export class InfoLearnView extends ItemView {
     content.createEl('h3', { text: '복습 세션' });
 
     if (!state.reviewState.isActive || state.reviewState.queue.length === 0) {
-      const dueCards = state.learningCards.filter(c => c.fsrsState.nextReview <= Date.now());
+      // Get all due cards first
+      const allDueCards = state.learningCards.filter(c => c.fsrsState.nextReview <= Date.now());
 
-      if (dueCards.length === 0) {
+      // Filter section
+      const filterSection = content.createDiv({ cls: 'sil-review-filter-section' });
+      filterSection.createEl('h4', { text: '복습 범위 선택' });
+
+      const filterOptions = filterSection.createDiv({ cls: 'sil-filter-options' });
+
+      // Filter mode options
+      const modes: { id: 'all' | 'current-note' | 'folder' | 'date-range'; label: string; desc: string }[] = [
+        { id: 'all', label: '전체', desc: `모든 복습 카드 (${allDueCards.length}개)` },
+        { id: 'current-note', label: '현재 노트', desc: '현재 열린 노트의 카드만' },
+        { id: 'folder', label: '폴더 선택', desc: '특정 폴더의 카드만' },
+        { id: 'date-range', label: '기간 선택', desc: '특정 기간에 생성된 카드만' },
+      ];
+
+      modes.forEach(mode => {
+        const modeOption = filterOptions.createDiv({ cls: 'sil-filter-mode-option' });
+        const radio = modeOption.createEl('input', {
+          attr: { type: 'radio', name: 'review-filter', value: mode.id }
+        });
+        radio.checked = this.reviewFilter.mode === mode.id;
+
+        const labelDiv = modeOption.createDiv({ cls: 'sil-filter-mode-label' });
+        labelDiv.createEl('strong', { text: mode.label });
+        labelDiv.createEl('span', { text: mode.desc, cls: 'sil-filter-mode-desc' });
+
+        const updateFilter = () => {
+          this.reviewFilter.mode = mode.id;
+          this.refresh();
+        };
+        radio.onchange = updateFilter;
+        modeOption.onclick = (e) => {
+          if (e.target !== radio) {
+            radio.checked = true;
+            updateFilter();
+          }
+        };
+      });
+
+      // Additional filter controls based on mode
+      const filterControls = filterSection.createDiv({ cls: 'sil-filter-controls' });
+
+      if (this.reviewFilter.mode === 'folder') {
+        const folderDiv = filterControls.createDiv({ cls: 'sil-filter-control' });
+        folderDiv.createEl('label', { text: '폴더 선택:' });
+        const folderSelect = folderDiv.createEl('select', { cls: 'sil-select-compact' });
+
+        // Get unique folders from cards
+        const folders = [...new Set(state.learningCards.map(c => {
+          const parts = c.sourceFile.split('/');
+          return parts.length > 1 ? parts.slice(0, -1).join('/') : '/';
+        }))].sort();
+
+        folders.forEach(folder => {
+          const count = allDueCards.filter(c => c.sourceFile.startsWith(folder === '/' ? '' : folder)).length;
+          folderSelect.createEl('option', {
+            text: `${folder || '/'} (${count}개)`,
+            attr: { value: folder }
+          });
+        });
+
+        if (this.reviewFilter.folderPath) {
+          folderSelect.value = this.reviewFilter.folderPath;
+        }
+        folderSelect.onchange = () => {
+          this.reviewFilter.folderPath = folderSelect.value;
+          this.refresh();
+        };
+      }
+
+      if (this.reviewFilter.mode === 'date-range') {
+        const dateDiv = filterControls.createDiv({ cls: 'sil-filter-control' });
+        dateDiv.createEl('label', { text: '기간:' });
+
+        const dateRow = dateDiv.createDiv({ cls: 'sil-date-filter-row' });
+        const dateFrom = dateRow.createEl('input', { attr: { type: 'date' }, cls: 'sil-date-input-compact' });
+        dateRow.createSpan({ text: '~' });
+        const dateTo = dateRow.createEl('input', { attr: { type: 'date' }, cls: 'sil-date-input-compact' });
+
+        // Set default values
+        const today = new Date();
+        const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        dateFrom.value = this.reviewFilter.dateFrom || thirtyDaysAgo.toISOString().split('T')[0];
+        dateTo.value = this.reviewFilter.dateTo || today.toISOString().split('T')[0];
+
+        dateFrom.onchange = () => {
+          this.reviewFilter.dateFrom = dateFrom.value;
+          this.refresh();
+        };
+        dateTo.onchange = () => {
+          this.reviewFilter.dateTo = dateTo.value;
+          this.refresh();
+        };
+      }
+
+      // Apply filter to get filtered cards
+      const filteredDueCards = this.getFilteredDueCards(allDueCards);
+
+      // Show current note info if in current-note mode
+      if (this.reviewFilter.mode === 'current-note') {
+        const activeFile = this.app.workspace.getActiveFile();
+        if (activeFile) {
+          const noteInfoDiv = filterControls.createDiv({ cls: 'sil-current-note-info' });
+          noteInfoDiv.createSpan({ text: `📄 ${activeFile.basename}`, cls: 'sil-note-name-small' });
+        }
+      }
+
+      // Preview count
+      const previewDiv = filterSection.createDiv({ cls: 'sil-filter-preview' });
+      if (filteredDueCards.length === 0) {
+        previewDiv.innerHTML = '<span class="sil-preview-empty">복습할 카드가 없습니다</span>';
+      } else {
+        previewDiv.innerHTML = `<span class="sil-preview-number">${filteredDueCards.length}</span>개의 카드를 복습합니다`;
+      }
+
+      if (allDueCards.length === 0) {
         const emptyState = content.createDiv({ cls: 'sil-empty-state' });
         emptyState.createEl('div', { text: '🎉', cls: 'sil-empty-icon' });
         emptyState.createEl('h4', { text: '모두 완료!' });
@@ -382,17 +504,17 @@ export class InfoLearnView extends ItemView {
       }
 
       const startSection = content.createDiv({ cls: 'sil-start-section' });
-      startSection.createEl('p', { text: `복습할 카드가 ${dueCards.length}개 있습니다.` });
 
       const startBtn = startSection.createEl('button', { cls: 'sil-primary-btn' });
-      startBtn.textContent = `복습 시작 (${dueCards.length}개)`;
+      startBtn.textContent = `복습 시작 (${filteredDueCards.length}개)`;
+      startBtn.disabled = filteredDueCards.length === 0;
       startBtn.onclick = () => {
-        this.shuffledOptionsCache.clear(); // Clear MCQ options cache for new session
-        this.shuffledBlanksCache.clear(); // Clear fill-blank cache for new session
+        this.shuffledOptionsCache.clear();
+        this.shuffledBlanksCache.clear();
         useAppStore.setState({
           reviewState: {
             ...state.reviewState,
-            queue: this.shuffleArray(dueCards.map(c => c.id)), // Randomize order
+            queue: this.shuffleArray(filteredDueCards.map(c => c.id)),
             currentIndex: 0,
             isActive: true,
             showAnswer: false,
@@ -1437,5 +1559,35 @@ export class InfoLearnView extends ItemView {
       'short_answer': '단답형',
     };
     return names[type] || type;
+  }
+
+  private getFilteredDueCards(dueCards: LearningCard[]): LearningCard[] {
+    switch (this.reviewFilter.mode) {
+      case 'current-note': {
+        const activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile) return [];
+        return dueCards.filter(c => c.sourceFile === activeFile.path);
+      }
+
+      case 'folder': {
+        const folderPath = this.reviewFilter.folderPath;
+        if (!folderPath) return dueCards;
+        if (folderPath === '/') {
+          // Root folder - cards without subfolder
+          return dueCards.filter(c => !c.sourceFile.includes('/'));
+        }
+        return dueCards.filter(c => c.sourceFile.startsWith(folderPath + '/') || c.sourceFile.startsWith(folderPath));
+      }
+
+      case 'date-range': {
+        const fromDate = this.reviewFilter.dateFrom ? new Date(this.reviewFilter.dateFrom).getTime() : 0;
+        const toDate = this.reviewFilter.dateTo ? new Date(this.reviewFilter.dateTo).getTime() + 24 * 60 * 60 * 1000 : Date.now();
+        return dueCards.filter(c => c.createdAt >= fromDate && c.createdAt < toDate);
+      }
+
+      case 'all':
+      default:
+        return dueCards;
+    }
   }
 }
