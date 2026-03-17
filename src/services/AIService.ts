@@ -1,69 +1,48 @@
 /**
- * AI Service - Handles communication with multiple AI providers (Simplified)
+ * AI Service - 동적 제공자/모델 기반 AI 통신 (v2)
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { AIProvider, AIProviderConfig, AIServiceConfig } from '../types/ai';
+import { AIProviderDefinition, AIModelDefinition, AIServiceConfig } from '../types/ai';
 import { AIServiceError, ProviderNotConfiguredError, ApiKeyNotSetError, RateLimitError, isAxiosError } from '../types/errors';
 import { LearningCard, LearningCardType, createLearningCard, QuestionGenerationRequest, QuestionGenerationResult, AnswerEvaluation } from '../types/learning';
 
 export class AIService {
   private config: AIServiceConfig;
-  private currentProvider: AIProvider;
-  private axiosInstances: Record<AIProvider, AxiosInstance> = {} as any;
+  private axiosInstances: Map<string, AxiosInstance> = new Map();
 
   constructor(config: AIServiceConfig) {
     this.config = config;
-    this.currentProvider = config.defaultProvider;
     this.initializeAxiosInstances();
   }
 
   private initializeAxiosInstances(): void {
-    const providers: AIProvider[] = ['openai', 'anthropic', 'gemini', 'grok', 'zhipu'];
-
-    providers.forEach(provider => {
-      const providerConfig = this.config.providers[provider];
-      if (providerConfig && providerConfig.apiKey) {
-        this.axiosInstances[provider] = this.createAxiosInstance(provider, providerConfig);
+    for (const provider of this.config.providers) {
+      if (provider.apiKey) {
+        this.axiosInstances.set(provider.id, this.createAxiosInstance(provider));
       }
-    });
+    }
   }
 
-  private createAxiosInstance(provider: AIProvider, config: AIProviderConfig): AxiosInstance {
-    const baseURL = config.baseUrl || this.getDefaultBaseURL(provider);
-
+  private createAxiosInstance(provider: AIProviderDefinition): AxiosInstance {
     return axios.create({
-      baseURL,
-      timeout: 300000, // 5 minutes for batch generation requests
-      headers: this.getHeaders(provider, config),
+      baseURL: provider.baseUrl,
+      timeout: 300000,
+      headers: this.getHeaders(provider),
     });
   }
 
-  private getDefaultBaseURL(provider: AIProvider): string {
-    const urls: Record<AIProvider, string> = {
-      openai: 'https://api.openai.com/v1',
-      anthropic: 'https://api.anthropic.com/v1',
-      gemini: 'https://generativelanguage.googleapis.com/v1beta/openai',
-      grok: 'https://api.x.ai/v1',
-      zhipu: 'https://api.z.ai/api/coding/paas/v4',
-    };
-    return urls[provider];
-  }
-
-  private getHeaders(provider: AIProvider, config: AIProviderConfig): Record<string, string> {
+  private getHeaders(provider: AIProviderDefinition): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
 
-    switch (provider) {
-      case 'openai':
-      case 'grok':
-      case 'gemini':
-      case 'zhipu':
-        headers['Authorization'] = `Bearer ${config.apiKey}`;
+    switch (provider.authType) {
+      case 'bearer':
+        headers['Authorization'] = `Bearer ${provider.apiKey}`;
         break;
-      case 'anthropic':
-        headers['x-api-key'] = config.apiKey;
+      case 'x-api-key':
+        headers['x-api-key'] = provider.apiKey;
         headers['anthropic-version'] = '2023-06-01';
         break;
     }
@@ -71,211 +50,168 @@ export class AIService {
     return headers;
   }
 
-  setProvider(provider: AIProvider): void {
-    if (!this.config.providers[provider]) {
-      throw new ProviderNotConfiguredError(provider);
-    }
-    if (!this.config.providers[provider].apiKey) {
-      throw new ApiKeyNotSetError(provider);
-    }
-    this.currentProvider = provider;
+  /** 제공자 찾기 */
+  private findProvider(providerId: string): AIProviderDefinition | undefined {
+    return this.config.providers.find(p => p.id === providerId);
   }
 
-  getProvider(): AIProvider {
-    return this.currentProvider;
+  /** 모델 찾기 */
+  private findModel(modelId: string): AIModelDefinition | undefined {
+    return this.config.models.find(m => m.id === modelId);
   }
 
-  async testConnection(provider: AIProvider): Promise<boolean> {
-    try {
-      const config = this.config.providers[provider];
-      if (!config || !config.apiKey) {
-        return false;
-      }
-
-      const testInstance = this.createAxiosInstance(provider, config);
-      const testPrompt = 'Say "OK" only.';
-
-      switch (provider) {
-        case 'openai':
-        case 'grok':
-          await testInstance.post('/chat/completions', {
-            model: config.model,
-            messages: [{ role: 'user', content: testPrompt }],
-            max_tokens: 10,
-          });
-          break;
-
-        case 'anthropic':
-          await testInstance.post('/messages', {
-            model: config.model,
-            max_tokens: 10,
-            messages: [{ role: 'user', content: testPrompt }],
-          });
-          break;
-
-        case 'gemini':
-        case 'zhipu':
-          await testInstance.post('/chat/completions', {
-            model: config.model,
-            messages: [{ role: 'user', content: testPrompt }],
-            max_tokens: 10,
-          });
-          break;
-      }
-
-      return true;
-    } catch (error) {
-      console.error(`Connection test failed for ${provider}:`, error);
-      return false;
+  /** 모델에 개별 API 키가 있으면 해당 키로 인스턴스 생성 */
+  private getInstanceForModel(provider: AIProviderDefinition, model?: AIModelDefinition): AxiosInstance {
+    // 모델 전용 API 키가 있으면 별도 인스턴스 생성
+    if (model?.apiKey) {
+      const overridden: AIProviderDefinition = { ...provider, apiKey: model.apiKey };
+      return this.createAxiosInstance(overridden);
     }
+
+    // 제공자 기본 인스턴스 사용 (없으면 생성)
+    const existing = this.axiosInstances.get(provider.id);
+    if (existing) return existing;
+
+    const newInstance = this.createAxiosInstance(provider);
+    this.axiosInstances.set(provider.id, newInstance);
+    return newInstance;
   }
 
+  /** 현재 기본 제공자+모델로 AI 호출 */
   private async callAI(prompt: string): Promise<string> {
-    const config = this.config.providers[this.currentProvider];
-    if (!config) {
-      throw new ProviderNotConfiguredError(this.currentProvider);
+    const provider = this.findProvider(this.config.defaultProviderId);
+    if (!provider) {
+      throw new ProviderNotConfiguredError(this.config.defaultProviderId);
     }
 
+    const model = this.findModel(this.config.defaultModelId);
+    const effectiveApiKey = model?.apiKey || provider.apiKey;
+    if (!effectiveApiKey) {
+      throw new ApiKeyNotSetError(this.config.defaultProviderId);
+    }
+
+    const instance = this.getInstanceForModel(provider, model);
+    return this.callWithInstance(instance, provider, this.config.defaultModelId, prompt);
+  }
+
+  /** 인스턴스를 사용한 실제 호출 */
+  private async callWithInstance(
+    instance: AxiosInstance,
+    provider: AIProviderDefinition,
+    modelId: string,
+    prompt: string
+  ): Promise<string> {
     try {
-      switch (this.currentProvider) {
-        case 'openai':
-        case 'grok':
-          return await this.callOpenAI(config, prompt);
-        case 'anthropic':
-          return await this.callAnthropic(config, prompt);
-        case 'gemini':
-          return await this.callGemini(config, prompt);
-        case 'zhipu':
-          return await this.callZhipu(config, prompt);
-        default:
-          throw new AIServiceError(
-            `Unknown provider: ${this.currentProvider}`,
-            this.currentProvider
-          );
+      if (provider.apiFormat === 'anthropic') {
+        return await this.callAnthropic(instance, modelId, prompt);
       }
+      return await this.callOpenAICompatible(instance, modelId, prompt);
     } catch (error) {
       if (error instanceof AIServiceError) {
         throw error;
       }
-
       if (isAxiosError(error) && error.response?.status === 429) {
         const retryAfter = parseInt(error.response?.data?.retry_after || '60', 10);
-        throw new RateLimitError(this.currentProvider, retryAfter);
+        throw new RateLimitError(provider.id, retryAfter);
       }
-
-      throw AIServiceError.fromAxiosError(this.currentProvider, error);
+      throw AIServiceError.fromAxiosError(provider.id, error);
     }
   }
 
-  private async callOpenAI(config: AIProviderConfig, prompt: string): Promise<string> {
-    const instance = this.axiosInstances[this.currentProvider];
-    if (!instance) {
-      throw new Error('OpenAI instance not initialized');
-    }
-
+  /** OpenAI 호환 API 호출 (Gemini, OpenAI, z.ai, Grok 등) */
+  private async callOpenAICompatible(
+    instance: AxiosInstance,
+    model: string,
+    prompt: string
+  ): Promise<string> {
     const response = await instance.post('/chat/completions', {
-      model: config.model,
+      model,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
       max_tokens: 16000,
     });
-
     return response.data.choices[0].message.content;
   }
 
-  private async callAnthropic(config: AIProviderConfig, prompt: string): Promise<string> {
-    const instance = this.axiosInstances[this.currentProvider];
-    if (!instance) {
-      throw new Error('Anthropic instance not initialized');
-    }
-
+  /** Anthropic API 호출 */
+  private async callAnthropic(
+    instance: AxiosInstance,
+    model: string,
+    prompt: string
+  ): Promise<string> {
     const response = await instance.post('/messages', {
-      model: config.model,
+      model,
       max_tokens: 16000,
       messages: [{ role: 'user', content: prompt }],
     });
-
     return response.data.content[0].text;
   }
 
-  private async callGemini(config: AIProviderConfig, prompt: string): Promise<string> {
-    const instance = this.axiosInstances['gemini'];
-    if (!instance) {
-      throw new Error('Gemini instance not initialized');
-    }
+  /** 연결 테스트 (특정 제공자+모델, 임시 API 키 지원) */
+  async testConnection(providerId: string, modelId?: string, overrideApiKey?: string): Promise<boolean> {
+    try {
+      const provider = this.findProvider(providerId);
+      if (!provider) {
+        return false;
+      }
 
-    const response = await instance.post('/chat/completions', {
-      model: config.model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      max_tokens: 16000,
-    });
+      const testModel = modelId || this.config.models.find(m => m.providerId === providerId)?.id;
+      if (!testModel) {
+        return false;
+      }
 
-    return response.data.choices[0].message.content;
-  }
+      // API 키 우선순위: overrideApiKey > 모델 apiKey > 제공자 apiKey
+      const model = this.findModel(testModel);
+      const effectiveApiKey = overrideApiKey || model?.apiKey || provider.apiKey;
+      if (!effectiveApiKey) {
+        return false;
+      }
 
-  private async callZhipu(config: AIProviderConfig, prompt: string): Promise<string> {
-    const instance = this.axiosInstances[this.currentProvider];
-    if (!instance) {
-      throw new Error('Zhipu instance not initialized');
-    }
+      const testProvider: AIProviderDefinition = { ...provider, apiKey: effectiveApiKey };
+      const testInstance = this.createAxiosInstance(testProvider);
+      const testPrompt = 'Say "OK" only.';
 
-    const response = await instance.post('/chat/completions', {
-      model: config.model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      max_tokens: 16000,
-    });
+      if (provider.apiFormat === 'anthropic') {
+        await testInstance.post('/messages', {
+          model: testModel,
+          max_tokens: 10,
+          messages: [{ role: 'user', content: testPrompt }],
+        });
+      } else {
+        await testInstance.post('/chat/completions', {
+          model: testModel,
+          messages: [{ role: 'user', content: testPrompt }],
+          max_tokens: 10,
+        });
+      }
 
-    return response.data.choices[0].message.content;
-  }
-
-  updateProviderConfig(provider: AIProvider, config: Partial<AIProviderConfig>): void {
-    if (!this.config.providers[provider]) {
-      this.config.providers[provider] = {
-        provider,
-        apiKey: '',
-        model: '',
-        ...config,
-      };
-    } else {
-      this.config.providers[provider] = {
-        ...this.config.providers[provider],
-        ...config,
-      };
-    }
-
-    if (this.config.providers[provider].apiKey) {
-      this.axiosInstances[provider] = this.createAxiosInstance(provider, this.config.providers[provider]);
+      return true;
+    } catch (error) {
+      console.error(`Connection test failed for ${providerId}:`, error);
+      return false;
     }
   }
 
-  getAllProviderConfigs(): Record<AIProvider, AIProviderConfig> {
-    return this.config.providers;
+  /** 설정 업데이트 */
+  updateConfig(config: AIServiceConfig): void {
+    this.config = config;
+    this.axiosInstances.clear();
+    this.initializeAxiosInstances();
   }
 
-  getProviderConfig(provider: AIProvider): AIProviderConfig | undefined {
-    return this.config.providers[provider];
-  }
-
-  setDefaultProvider(provider: AIProvider): void {
-    this.config.defaultProvider = provider;
-    this.currentProvider = provider;
-  }
-
-  getDefaultProvider(): AIProvider {
-    return this.config.defaultProvider;
+  getConfig(): AIServiceConfig {
+    return this.config;
   }
 
   /**
-   * Generate learning questions from content
+   * 학습 질문 생성
    */
   async generateQuestions(
     request: QuestionGenerationRequest
   ): Promise<QuestionGenerationResult> {
-    const config = this.config.providers[this.currentProvider];
-    if (!config) {
-      throw new ProviderNotConfiguredError(this.currentProvider);
+    const provider = this.findProvider(this.config.defaultProviderId);
+    if (!provider) {
+      throw new ProviderNotConfiguredError(this.config.defaultProviderId);
     }
 
     const questionTypePrompts = this.getQuestionTypePrompts(request.questionTypes);
@@ -320,21 +256,17 @@ ${questionTypePrompts}
     try {
       const response = await this.callAI(prompt);
 
-      // Try to extract JSON from the response
       let jsonStr = response.trim();
-
-      // Log raw response for debugging
       console.log('AI raw response length:', response.length);
 
       if (!jsonStr) {
-        throw new AIServiceError('Empty response from AI', this.currentProvider);
+        throw new AIServiceError('Empty response from AI', this.config.defaultProviderId);
       }
 
       if (jsonStr.startsWith('```')) {
         jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```/g, '');
       }
 
-      // Try to find JSON object in response
       const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         jsonStr = jsonMatch[0];
@@ -347,12 +279,11 @@ ${questionTypePrompts}
         console.error('JSON parse error. Response:', jsonStr.slice(0, 500));
         throw new AIServiceError(
           `Invalid JSON response from AI. Response preview: ${jsonStr.slice(0, 200)}...`,
-          this.currentProvider
+          this.config.defaultProviderId
         );
       }
 
       const cards: LearningCard[] = result.cards.map((cardData: Record<string, unknown>) => {
-        // Handle both old format (object) and new format (string) for front/back
         const front = typeof cardData.front === 'object'
           ? (cardData.front as { content: string }).content
           : cardData.front as string;
@@ -381,7 +312,7 @@ ${questionTypePrompts}
       };
     } catch (error) {
       console.error('Error generating questions:', error);
-      throw AIServiceError.fromAxiosError(this.currentProvider, error);
+      throw AIServiceError.fromAxiosError(this.config.defaultProviderId, error);
     }
   }
 
@@ -399,7 +330,7 @@ ${questionTypePrompts}
   }
 
   /**
-   * Evaluate user's answer using AI
+   * 사용자 답변 평가
    */
   async evaluateAnswer(
     expectedAnswer: string,

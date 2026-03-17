@@ -20,6 +20,7 @@ import {
   getNoteInfo,
 } from '../utils/frontmatter';
 import type StarInfoLearn from '../../main';
+import { t } from '../i18n';
 
 export const INFOLEARN_VIEW_TYPE = 'star-infolearn-view';
 
@@ -122,20 +123,20 @@ export class InfoLearnView extends ItemView {
 
   private renderHeader(container: HTMLElement): void {
     const header = container.createDiv({ cls: 'sil-header' });
-    header.createEl('h2', { text: 'Star InfoLearn' });
+    header.createEl('h2', { text: t().header.title });
 
     const state = useAppStore.getState();
 
     const statsDiv = header.createDiv({ cls: 'sil-header-stats' });
     const dueCount = state.learningCards.filter(c => c.fsrsState.nextReview <= Date.now()).length;
     statsDiv.createSpan({
-      text: `${state.learningCards.length}개 카드 | 오늘 ${dueCount}개 복습 예정`,
+      text: t().header.cardCount(state.learningCards.length, dueCount),
       cls: 'sil-stats-text'
     });
 
     if (state.selectedText) {
       const textPreview = header.createDiv({ cls: 'sil-text-preview' });
-      textPreview.createSpan({ text: '선택됨: ' });
+      textPreview.createSpan({ text: t().header.selected });
       textPreview.createSpan({
         text: state.selectedText.slice(0, 50) + (state.selectedText.length > 50 ? '...' : ''),
         cls: 'sil-preview-text'
@@ -148,10 +149,10 @@ export class InfoLearnView extends ItemView {
     const selector = container.createDiv({ cls: 'sil-mode-selector' });
 
     const modes: { id: AppMode; icon: string; name: string; desc: string }[] = [
-      { id: 'study', icon: '📖', name: '학습', desc: '학습 대시보드' },
-      { id: 'review', icon: '🔄', name: '복습', desc: '간격 반복 학습' },
-      { id: 'card-editor', icon: '✏️', name: '생성', desc: '카드 생성' },
-      { id: 'settings', icon: '⚙️', name: '설정', desc: 'AI 제공자' },
+      { id: 'study', icon: '📖', name: t().mode.study, desc: t().study.title },
+      { id: 'review', icon: '🔄', name: t().mode.review, desc: t().review.title },
+      { id: 'card-editor', icon: '✏️', name: t().mode['card-editor'], desc: t().cardEditor.title },
+      { id: 'settings', icon: '⚙️', name: t().mode.settings, desc: t().settingsView.title },
     ];
 
     modes.forEach(mode => {
@@ -190,27 +191,27 @@ export class InfoLearnView extends ItemView {
 
   private renderWelcome(): void {
     const welcome = this.contentAreaEl.createDiv({ cls: 'sil-welcome' });
-    welcome.createEl('h3', { text: 'Star InfoLearn에 오신 것을 환영합니다' });
-    welcome.createEl('p', { text: 'Obsidian을 위한 AI 기반 플래시카드 학습' });
+    welcome.createEl('h3', { text: t().welcome.title });
+    welcome.createEl('p', { text: t().welcome.subtitle });
 
     const actions = welcome.createDiv({ cls: 'sil-quick-actions' });
 
     const studyBtn = actions.createEl('button', { cls: 'sil-action-btn primary' });
-    studyBtn.createSpan({ text: '학습 시작하기' });
+    studyBtn.createSpan({ text: t().welcome.startStudy });
     studyBtn.onclick = () => useAppStore.setState({ currentMode: 'study' });
 
     const createBtn = actions.createEl('button', { cls: 'sil-action-btn' });
-    createBtn.createSpan({ text: '카드 만들기' });
+    createBtn.createSpan({ text: t().welcome.createCards });
     createBtn.onclick = () => useAppStore.setState({ currentMode: 'card-editor' });
 
     const features = welcome.createDiv({ cls: 'sil-features' });
-    features.createEl('h4', { text: '주요 기능:' });
+    features.createEl('h4', { text: t().welcome.features });
 
     const featureList = [
-      'FSRS 간격 반복 - 최적의 복습 스케줄링',
-      'AI 카드 생성 - 노트에서 자동으로 카드 생성',
-      '4가지 퀴즈 유형 - 플래시카드, 객관식, 빈칸, 단답형',
-      '진행 추적 - 학습 여정을 추적',
+      t().welcome.feature1,
+      t().welcome.feature2,
+      t().welcome.feature3,
+      t().welcome.feature4,
     ];
 
     const ul = features.createEl('ul', { cls: 'sil-feature-list' });
@@ -219,7 +220,7 @@ export class InfoLearnView extends ItemView {
     });
 
     const tip = welcome.createDiv({ cls: 'sil-tip' });
-    tip.createSpan({ text: '팁: 노트에서 텍스트를 선택하고 우클릭하여 플래시카드를 생성하세요!' });
+    tip.createSpan({ text: t().welcome.tip });
   }
 
   private renderStudyMode(): void {
@@ -228,11 +229,11 @@ export class InfoLearnView extends ItemView {
 
     // Header with title and refresh button
     const header = content.createDiv({ cls: 'sil-study-header' });
-    header.createEl('h3', { text: '학습 대시보드' });
+    header.createEl('h3', { text: t().study.title });
 
     const refreshBtn = header.createEl('button', { cls: 'sil-refresh-btn' });
     refreshBtn.innerHTML = '&#x21bb;'; // Refresh icon
-    refreshBtn.title = '새로고침';
+    refreshBtn.title = t().common.refresh;
     refreshBtn.onclick = async () => {
       refreshBtn.addClass('spinning');
       // Reload cards from storage
@@ -250,10 +251,10 @@ export class InfoLearnView extends ItemView {
     const reviewCards = state.learningCards.filter(c => c.fsrsState.state === 'review').length;
 
     const stats = [
-      { label: '전체 카드', value: totalCards, icon: '📋' },
-      { label: '오늘 복습', value: dueCards, icon: '🎯', highlight: dueCards > 0 },
-      { label: '새 카드', value: newCards, icon: '✨' },
-      { label: '복습 중', value: reviewCards, icon: '🔄' },
+      { label: t().study.totalCards, value: totalCards, icon: '📋' },
+      { label: t().study.reviewedToday, value: dueCards, icon: '🎯', highlight: dueCards > 0 },
+      { label: t().study.newCards, value: newCards, icon: '✨' },
+      { label: t().study.inReview, value: reviewCards, icon: '🔄' },
     ];
 
     stats.forEach(stat => {
@@ -265,13 +266,13 @@ export class InfoLearnView extends ItemView {
 
     // Quick actions
     const actionsSection = content.createDiv({ cls: 'sil-actions-section' });
-    actionsSection.createEl('h4', { text: '빠른 실행' });
+    actionsSection.createEl('h4', { text: t().study.quickActions });
 
     const actionGrid = actionsSection.createDiv({ cls: 'sil-action-grid' });
 
     if (dueCards > 0) {
       const reviewBtn = actionGrid.createEl('button', { cls: 'sil-action-btn primary' });
-      reviewBtn.createSpan({ text: `${dueCards}개 카드 복습하기` });
+      reviewBtn.createSpan({ text: t().study.reviewCards(dueCards) });
       reviewBtn.onclick = () => {
         const dueCardIds = state.learningCards
           .filter(c => c.fsrsState.nextReview <= Date.now())
@@ -291,17 +292,17 @@ export class InfoLearnView extends ItemView {
       };
     } else {
       const noCardsMsg = actionGrid.createDiv({ cls: 'sil-no-due' });
-      noCardsMsg.createSpan({ text: '복습할 카드가 없습니다! 카드를 만들어 학습을 시작하세요.' });
+      noCardsMsg.createSpan({ text: t().study.noCardsMessage });
     }
 
     const createBtn = actionGrid.createEl('button', { cls: 'sil-action-btn' });
-    createBtn.createSpan({ text: '카드 만들기' });
+    createBtn.createSpan({ text: t().study.createCards });
     createBtn.onclick = () => useAppStore.setState({ currentMode: 'card-editor' });
 
     // Delete cards button (if there are cards)
     if (state.learningCards.length > 0) {
       const deleteBtn = actionGrid.createEl('button', { cls: 'sil-action-btn danger' });
-      deleteBtn.createSpan({ text: '카드 삭제' });
+      deleteBtn.createSpan({ text: t().study.deleteCards });
       deleteBtn.onclick = () => {
         const currentFile = this.app.workspace.getActiveFile();
         const modal = new DeleteCardsModal(
@@ -320,7 +321,7 @@ export class InfoLearnView extends ItemView {
               c => !cardsToDelete.some(d => d.id === c.id)
             );
             useAppStore.setState({ learningCards: remainingCards });
-            new Notice(`${cardsToDelete.length}개의 카드가 삭제되었습니다.`);
+            new Notice(t().notice.cardsDeleted(cardsToDelete.length));
             this.refresh();
           }
         );
@@ -331,7 +332,7 @@ export class InfoLearnView extends ItemView {
     // Recent cards
     if (state.learningCards.length > 0) {
       const recentSection = content.createDiv({ cls: 'sil-recent-section' });
-      recentSection.createEl('h4', { text: '최근 카드' });
+      recentSection.createEl('h4', { text: t().study.recentCards });
 
       const cardList = recentSection.createDiv({ cls: 'sil-card-list' });
       const sortedCards = [...state.learningCards].sort((a, b) => b.updatedAt - a.updatedAt);
@@ -352,7 +353,7 @@ export class InfoLearnView extends ItemView {
     // Card type distribution
     if (state.learningCards.length > 0) {
       const distributionSection = content.createDiv({ cls: 'sil-distribution-section' });
-      distributionSection.createEl('h4', { text: '카드 유형' });
+      distributionSection.createEl('h4', { text: t().study.cardTypes });
 
       const typeCount: Record<string, number> = {};
       state.learningCards.forEach(card => {
@@ -372,7 +373,7 @@ export class InfoLearnView extends ItemView {
     const state = useAppStore.getState();
     const content = this.contentAreaEl.createDiv({ cls: 'sil-review' });
 
-    content.createEl('h3', { text: '복습 세션' });
+    content.createEl('h3', { text: t().review.title });
 
     if (!state.reviewState.isActive || state.reviewState.queue.length === 0) {
       // Get all due cards first
@@ -380,16 +381,16 @@ export class InfoLearnView extends ItemView {
 
       // Filter section
       const filterSection = content.createDiv({ cls: 'sil-review-filter-section' });
-      filterSection.createEl('h4', { text: '복습 범위 선택' });
+      filterSection.createEl('h4', { text: t().review.selectScope });
 
       const filterOptions = filterSection.createDiv({ cls: 'sil-filter-options' });
 
       // Filter mode options
       const modes: { id: 'all' | 'current-note' | 'folder' | 'date-range'; label: string; desc: string }[] = [
-        { id: 'all', label: '전체', desc: `모든 복습 카드 (${allDueCards.length}개)` },
-        { id: 'current-note', label: '현재 노트', desc: '현재 열린 노트의 카드만' },
-        { id: 'folder', label: '폴더 선택', desc: '특정 폴더의 카드만' },
-        { id: 'date-range', label: '기간 선택', desc: '특정 기간에 생성된 카드만' },
+        { id: 'all', label: t().review.scopeAll, desc: t().review.scopeAllDesc(allDueCards.length) },
+        { id: 'current-note', label: t().review.scopeCurrentNote, desc: t().review.scopeCurrentNoteDesc },
+        { id: 'folder', label: t().review.scopeFolder, desc: t().review.scopeFolderDesc },
+        { id: 'date-range', label: t().review.scopeDateRange, desc: t().review.scopeDateRangeDesc },
       ];
 
       modes.forEach(mode => {
@@ -421,7 +422,7 @@ export class InfoLearnView extends ItemView {
 
       if (this.reviewFilter.mode === 'folder') {
         const folderDiv = filterControls.createDiv({ cls: 'sil-filter-control' });
-        folderDiv.createEl('label', { text: '폴더 선택:' });
+        folderDiv.createEl('label', { text: t().review.selectFolder });
         const folderSelect = folderDiv.createEl('select', { cls: 'sil-select-compact' });
 
         // Get unique folders from cards
@@ -449,11 +450,11 @@ export class InfoLearnView extends ItemView {
 
       if (this.reviewFilter.mode === 'date-range') {
         const dateDiv = filterControls.createDiv({ cls: 'sil-filter-control' });
-        dateDiv.createEl('label', { text: '기간:' });
+        dateDiv.createEl('label', { text: t().review.dateRange });
 
         const dateRow = dateDiv.createDiv({ cls: 'sil-date-filter-row' });
         const dateFrom = dateRow.createEl('input', { attr: { type: 'date' }, cls: 'sil-date-input-compact' });
-        dateRow.createSpan({ text: '~' });
+        dateRow.createSpan({ text: t().review.dateSeparator });
         const dateTo = dateRow.createEl('input', { attr: { type: 'date' }, cls: 'sil-date-input-compact' });
 
         // Set default values
@@ -495,10 +496,10 @@ export class InfoLearnView extends ItemView {
       if (allDueCards.length === 0) {
         const emptyState = content.createDiv({ cls: 'sil-empty-state' });
         emptyState.createEl('div', { text: '🎉', cls: 'sil-empty-icon' });
-        emptyState.createEl('h4', { text: '모두 완료!' });
-        emptyState.createEl('p', { text: '복습할 카드가 없습니다. 나중에 다시 확인하세요!' });
+        emptyState.createEl('h4', { text: t().review.allComplete });
+        emptyState.createEl('p', { text: t().review.noMoreCards });
 
-        const backBtn = emptyState.createEl('button', { text: '← 대시보드로 돌아가기' });
+        const backBtn = emptyState.createEl('button', { text: t().review.backToDashboard });
         backBtn.onclick = () => useAppStore.setState({ currentMode: 'study' });
         return;
       }
@@ -506,7 +507,7 @@ export class InfoLearnView extends ItemView {
       const startSection = content.createDiv({ cls: 'sil-start-section' });
 
       const startBtn = startSection.createEl('button', { cls: 'sil-primary-btn' });
-      startBtn.textContent = `복습 시작 (${filteredDueCards.length}개)`;
+      startBtn.textContent = t().review.startReview(filteredDueCards.length);
       startBtn.disabled = filteredDueCards.length === 0;
       startBtn.onclick = () => {
         this.shuffledOptionsCache.clear();
@@ -530,7 +531,7 @@ export class InfoLearnView extends ItemView {
     const currentCard = state.learningCards.find(c => c.id === currentCardId);
 
     if (!currentCard) {
-      content.createEl('p', { text: '카드를 찾을 수 없습니다' });
+      content.createEl('p', { text: t().review.cardNotFound });
       return;
     }
 
@@ -540,7 +541,7 @@ export class InfoLearnView extends ItemView {
     const progressBar = progressSection.createDiv({ cls: 'sil-progress-bar' });
     progressBar.createDiv({ cls: 'sil-progress-fill' }).style.width = `${progress}%`;
     progressSection.createSpan({
-      text: `${state.reviewState.currentIndex + 1} / ${state.reviewState.queue.length}`,
+      text: t().review.progress(state.reviewState.currentIndex + 1, state.reviewState.queue.length),
       cls: 'sil-progress-text'
     });
 
@@ -576,7 +577,7 @@ export class InfoLearnView extends ItemView {
 
     if (card.hint && !showAnswer) {
       const hintDiv = cardDisplay.createDiv({ cls: 'sil-hint' });
-      hintDiv.createSpan({ text: '힌트: ' + card.hint });
+      hintDiv.createSpan({ text: t().review.hint + card.hint });
     }
 
     if (showAnswer) {
@@ -591,7 +592,7 @@ export class InfoLearnView extends ItemView {
       this.renderRatingButtons(container, card);
     } else {
       const showBtn = container.createEl('button', { cls: 'sil-show-answer-btn' });
-      showBtn.textContent = '정답 보기';
+      showBtn.textContent = t().review.showAnswer;
       showBtn.onclick = () => {
         useAppStore.setState({
           reviewState: {
@@ -609,7 +610,7 @@ export class InfoLearnView extends ItemView {
     cardDisplay.createEl('div', { text: card.front, cls: 'sil-card-question' });
 
     if (!card.options || card.options.length === 0) {
-      cardDisplay.createEl('p', { text: '선택지가 없습니다', cls: 'sil-error' });
+      cardDisplay.createEl('p', { text: t().review.noOptions, cls: 'sil-error' });
       return;
     }
 
@@ -645,7 +646,7 @@ export class InfoLearnView extends ItemView {
     if (reviewState.showAnswer) {
       const isCorrect = card.options.find(o => o.id === reviewState.selectedOptionId)?.isCorrect;
       const resultDiv = cardDisplay.createDiv({ cls: `sil-result ${isCorrect ? 'correct' : 'incorrect'}` });
-      resultDiv.createSpan({ text: isCorrect ? '✓ 정답!' : '✗ 오답' });
+      resultDiv.createSpan({ text: isCorrect ? t().review.correct : t().review.incorrect });
 
       if (card.explanation) {
         const explainDiv = cardDisplay.createDiv({ cls: 'sil-explanation' });
@@ -657,7 +658,7 @@ export class InfoLearnView extends ItemView {
       const submitBtn = container.createEl('button', {
         cls: `sil-submit-btn ${!reviewState.selectedOptionId ? 'disabled' : ''}`,
       });
-      submitBtn.textContent = '답안 제출';
+      submitBtn.textContent = t().review.submitAnswer;
       submitBtn.disabled = !reviewState.selectedOptionId;
       submitBtn.onclick = () => {
         useAppStore.setState({
@@ -674,7 +675,7 @@ export class InfoLearnView extends ItemView {
   private renderFillBlank(container: HTMLElement, card: LearningCard, reviewState: typeof useAppStore.getState.prototype.reviewState): void {
     const cardDisplay = container.createDiv({ cls: 'sil-card-display fill-blank' });
 
-    cardDisplay.createEl('div', { text: '빈칸을 채우세요:', cls: 'sil-card-instruction' });
+    cardDisplay.createEl('div', { text: t().review.fillBlanks, cls: 'sil-card-instruction' });
     cardDisplay.createEl('div', { text: card.front, cls: 'sil-card-question' });
 
     const inputsDiv = cardDisplay.createDiv({ cls: 'sil-blank-inputs' });
@@ -693,7 +694,7 @@ export class InfoLearnView extends ItemView {
     shuffledBlanks.forEach((blank, displayIdx) => {
       const originalIdx = blank.originalIndex;
       const inputWrapper = inputsDiv.createDiv({ cls: 'sil-blank-input-wrapper' });
-      inputWrapper.createSpan({ text: `빈칸 ${displayIdx + 1}: ` });
+      inputWrapper.createSpan({ text: t().review.blankN(displayIdx + 1) });
 
       if (reviewState.showAnswer) {
         const userAnswer = reviewState.blankAnswers[originalIdx] || '';
@@ -702,7 +703,7 @@ export class InfoLearnView extends ItemView {
         const answerSpan = inputWrapper.createSpan({
           cls: `sil-blank-answer ${isCorrect ? 'correct' : 'incorrect'}`,
         });
-        answerSpan.textContent = userAnswer || '(미입력)';
+        answerSpan.textContent = userAnswer || t().review.notEntered;
 
         if (!isCorrect) {
           inputWrapper.createSpan({ text: ` → ${blank.answer}`, cls: 'sil-correct-answer' });
@@ -710,7 +711,7 @@ export class InfoLearnView extends ItemView {
       } else {
         const input = inputWrapper.createEl('input', {
           cls: 'sil-blank-input',
-          attr: { type: 'text', placeholder: '답을 입력하세요...' }
+          attr: { type: 'text', placeholder: t().review.answerPlaceholder }
         });
         input.value = reviewState.blankAnswers[originalIdx] || '';
         input.oninput = (e) => {
@@ -733,7 +734,7 @@ export class InfoLearnView extends ItemView {
       });
 
       const resultDiv = cardDisplay.createDiv({ cls: `sil-result ${allCorrect ? 'correct' : 'incorrect'}` });
-      resultDiv.createSpan({ text: allCorrect ? '✓ 모두 정답!' : '✗ 일부 오답이 있습니다' });
+      resultDiv.createSpan({ text: allCorrect ? t().review.allCorrect : t().review.someIncorrect });
 
       if (card.explanation) {
         const explainDiv = cardDisplay.createDiv({ cls: 'sil-explanation' });
@@ -743,7 +744,7 @@ export class InfoLearnView extends ItemView {
       this.renderRatingButtons(container, card);
     } else {
       const submitBtn = container.createEl('button', { cls: 'sil-submit-btn' });
-      submitBtn.textContent = '정답 확인';
+      submitBtn.textContent = t().review.checkAnswer;
       submitBtn.onclick = () => {
         useAppStore.setState({
           reviewState: {
@@ -763,16 +764,16 @@ export class InfoLearnView extends ItemView {
 
     if (card.hint && !reviewState.showAnswer) {
       const hintDiv = cardDisplay.createDiv({ cls: 'sil-hint' });
-      hintDiv.createSpan({ text: '힌트: ' + card.hint });
+      hintDiv.createSpan({ text: t().review.hint + card.hint });
     }
 
     if (reviewState.showAnswer) {
       const userAnswerDiv = cardDisplay.createDiv({ cls: 'sil-user-answer' });
-      userAnswerDiv.createSpan({ text: '내 답변: ' });
-      userAnswerDiv.createSpan({ text: reviewState.userAnswer || '(미입력)', cls: 'sil-answer-text' });
+      userAnswerDiv.createSpan({ text: t().review.myAnswer });
+      userAnswerDiv.createSpan({ text: reviewState.userAnswer || t().review.notEntered, cls: 'sil-answer-text' });
 
       const correctDiv = cardDisplay.createDiv({ cls: 'sil-correct-answer-section' });
-      correctDiv.createSpan({ text: '정답: ' });
+      correctDiv.createSpan({ text: t().review.correctAnswer });
       correctDiv.createSpan({ text: card.back, cls: 'sil-answer-text' });
 
       if (card.explanation) {
@@ -784,7 +785,7 @@ export class InfoLearnView extends ItemView {
     } else {
       const answerArea = cardDisplay.createEl('textarea', {
         cls: 'sil-answer-textarea',
-        attr: { placeholder: '답을 입력하세요...', rows: '4' }
+        attr: { placeholder: t().review.answerPlaceholder, rows: '4' }
       });
       answerArea.value = reviewState.userAnswer;
       answerArea.oninput = (e) => {
@@ -797,7 +798,7 @@ export class InfoLearnView extends ItemView {
       };
 
       const submitBtn = container.createEl('button', { cls: 'sil-submit-btn' });
-      submitBtn.textContent = '정답 보기';
+      submitBtn.textContent = t().review.showAnswer;
       submitBtn.onclick = () => {
         useAppStore.setState({
           reviewState: {
@@ -812,15 +813,15 @@ export class InfoLearnView extends ItemView {
 
   private renderRatingButtons(container: HTMLElement, card: LearningCard): void {
     const ratingSection = container.createDiv({ cls: 'sil-rating-section' });
-    ratingSection.createEl('p', { text: '얼마나 잘 기억하셨나요?' });
+    ratingSection.createEl('p', { text: t().review.rateMemory });
 
     const ratingButtons = ratingSection.createDiv({ cls: 'sil-rating-buttons' });
 
     const ratings = [
-      { rating: 1, label: '다시', desc: '완전히 잊음', cls: 'again' },
-      { rating: 2, label: '어려움', desc: '겨우 기억함', cls: 'hard' },
-      { rating: 3, label: '보통', desc: '정확히 기억', cls: 'good' },
-      { rating: 4, label: '쉬움', desc: '완벽히 기억', cls: 'easy' },
+      { rating: 1, label: t().review.ratingAgain, desc: t().review.ratingAgainDesc, cls: 'again' },
+      { rating: 2, label: t().review.ratingHard, desc: t().review.ratingHardDesc, cls: 'hard' },
+      { rating: 3, label: t().review.ratingGood, desc: t().review.ratingGoodDesc, cls: 'good' },
+      { rating: 4, label: t().review.ratingEasy, desc: t().review.ratingEasyDesc, cls: 'easy' },
     ];
 
     ratings.forEach(r => {
@@ -873,7 +874,7 @@ export class InfoLearnView extends ItemView {
           userAnswer: '',
         },
       });
-      new Notice('복습 세션 완료!');
+      new Notice(t().notice.reviewComplete);
     } else {
       useAppStore.setState({
         reviewState: {
@@ -894,14 +895,14 @@ export class InfoLearnView extends ItemView {
     const settings = state.generationSettings;
     const content = this.contentAreaEl.createDiv({ cls: 'sil-card-editor' });
 
-    content.createEl('h3', { text: 'AI 카드 생성' });
+    content.createEl('h3', { text: t().cardEditor.title });
 
     // Mode toggle (Current Note / Batch)
     const modeToggle = content.createDiv({ cls: 'sil-mode-toggle' });
 
     const currentNoteBtn = modeToggle.createEl('button', {
       cls: `sil-toggle-btn ${config.mode === 'current-note' ? 'active' : ''}`,
-      text: '현재 노트'
+      text: t().cardEditor.currentNote
     });
     currentNoteBtn.onclick = () => {
       useAppStore.getState().setGenerationConfig({ mode: 'current-note' });
@@ -910,7 +911,7 @@ export class InfoLearnView extends ItemView {
 
     const batchBtn = modeToggle.createEl('button', {
       cls: `sil-toggle-btn ${config.mode === 'batch' ? 'active' : ''}`,
-      text: '일괄 생성'
+      text: t().cardEditor.batchGenerate
     });
     batchBtn.onclick = () => {
       useAppStore.getState().setGenerationConfig({ mode: 'batch' });
@@ -927,13 +928,13 @@ export class InfoLearnView extends ItemView {
     // Manual creation link
     const manualSection = content.createDiv({ cls: 'sil-manual-link-section' });
     const manualLink = manualSection.createEl('button', { cls: 'sil-link-btn' });
-    manualLink.innerHTML = '&#9998; 수동으로 카드 만들기';
+    manualLink.innerHTML = `&#9998; ${t().cardEditor.manualCreate}`;
     manualLink.onclick = () => this.openManualCardModal();
 
     // Loading indicator
     if (state.isLoading) {
       const loading = content.createDiv({ cls: 'sil-loading' });
-      loading.createSpan({ text: '카드 생성 중...' });
+      loading.createSpan({ text: t().cardEditor.generating });
     }
 
     // Existing cards list (collapsible)
@@ -971,7 +972,7 @@ export class InfoLearnView extends ItemView {
       }
     } else {
       noteInfoCard.createEl('div', {
-        text: '열린 노트가 없습니다. 카드를 생성하려면 노트를 열어주세요.',
+        text: t().cardEditor.noActiveNote,
         cls: 'sil-note-empty'
       });
     }
@@ -979,7 +980,7 @@ export class InfoLearnView extends ItemView {
     // Selected text preview (if any)
     if (state.selectedText) {
       const selectionPreview = container.createDiv({ cls: 'sil-selection-preview' });
-      selectionPreview.createEl('label', { text: '선택된 텍스트:' });
+      selectionPreview.createEl('label', { text: t().cardEditor.selectedText });
       selectionPreview.createEl('p', {
         text: `"${state.selectedText.slice(0, 150)}${state.selectedText.length > 150 ? '...' : ''}"`,
         cls: 'sil-preview-text'
@@ -988,14 +989,14 @@ export class InfoLearnView extends ItemView {
 
     // Card type selection
     const typeSection = container.createDiv({ cls: 'sil-type-section' });
-    typeSection.createEl('label', { text: '생성할 카드 유형:' });
+    typeSection.createEl('label', { text: t().cardEditor.cardTypes });
 
     const typeCheckboxes = typeSection.createDiv({ cls: 'sil-type-checkboxes' });
     const cardTypes: { value: LearningCardType; label: string; icon: string }[] = [
-      { value: 'flashcard', label: '플래시카드', icon: '' },
-      { value: 'multiple_choice', label: '객관식', icon: '' },
-      { value: 'fill_blank', label: '빈칸 채우기', icon: '' },
-      { value: 'short_answer', label: '단답형', icon: '&#9997;' },
+      { value: 'flashcard', label: t().cardType.flashcard, icon: '' },
+      { value: 'multiple_choice', label: t().cardType.multiple_choice, icon: '' },
+      { value: 'fill_blank', label: t().cardType.fill_blank, icon: '' },
+      { value: 'short_answer', label: t().cardType.short_answer, icon: '&#9997;' },
     ];
 
     cardTypes.forEach(type => {
@@ -1018,7 +1019,7 @@ export class InfoLearnView extends ItemView {
 
     // Count per type
     const countSection = container.createDiv({ cls: 'sil-count-section' });
-    countSection.createEl('label', { text: '유형당 카드 수:' });
+    countSection.createEl('label', { text: t().cardEditor.cardsPerType });
     const countSelect = countSection.createEl('select', { cls: 'sil-select sil-count-select' });
     [1, 2, 3, 4, 5, 7, 10].forEach(num => {
       const opt = countSelect.createEl('option', { text: num.toString(), attr: { value: num.toString() } });
@@ -1030,7 +1031,7 @@ export class InfoLearnView extends ItemView {
 
     // Generate button
     const generateBtn = container.createEl('button', { cls: 'sil-generate-btn sil-primary-btn' });
-    generateBtn.innerHTML = '&#128640; 카드 생성하기';
+    generateBtn.innerHTML = `&#128640; ${t().cardEditor.generateButton}`;
     generateBtn.disabled = !activeFile || config.selectedTypes.length === 0;
     generateBtn.onclick = async () => {
       if (!activeFile) return;
@@ -1047,14 +1048,14 @@ export class InfoLearnView extends ItemView {
 
     // Folder selection
     const folderSection = container.createDiv({ cls: 'sil-folder-section' });
-    folderSection.createEl('label', { text: '폴더 선택:' });
+    folderSection.createEl('label', { text: t().cardEditor.selectFolder });
 
     const folderRow = folderSection.createDiv({ cls: 'sil-folder-row' });
     const folderSelect = folderRow.createEl('select', { cls: 'sil-select sil-folder-select' });
 
     const folders = getAllFolders(this.app);
     folders.forEach(folder => {
-      const displayName = folder === '' ? '/ (루트)' : folder;
+      const displayName = folder === '' ? t().cardEditor.rootFolder : folder;
       const opt = folderSelect.createEl('option', { text: displayName, attr: { value: folder } });
       if (folder === config.folderPath) opt.selected = true;
     });
@@ -1071,11 +1072,11 @@ export class InfoLearnView extends ItemView {
     subfoldersCheckbox.onchange = () => {
       useAppStore.getState().setGenerationConfig({ includeSubfolders: subfoldersCheckbox.checked });
     };
-    subfoldersLabel.createSpan({ text: ' 하위 폴더 포함' });
+    subfoldersLabel.createSpan({ text: ` ${t().cardEditor.includeSubfolders}` });
 
     // Date range (optional)
     const dateSection = container.createDiv({ cls: 'sil-date-section' });
-    dateSection.createEl('label', { text: '날짜 범위 (선택):' });
+    dateSection.createEl('label', { text: t().cardEditor.dateRangeOptional });
 
     const dateRow = dateSection.createDiv({ cls: 'sil-date-row' });
     const fromInput = dateRow.createEl('input', {
@@ -1092,7 +1093,7 @@ export class InfoLearnView extends ItemView {
       });
     };
 
-    dateRow.createSpan({ text: ' ~ ' });
+    dateRow.createSpan({ text: ` ${t().review.dateSeparator} ` });
 
     const toInput = dateRow.createEl('input', {
       attr: { type: 'date', placeholder: 'To' },
@@ -1118,18 +1119,18 @@ export class InfoLearnView extends ItemView {
       this.plugin.settings.generation.skipGeneratedNotes = skipCheckbox.checked;
       this.plugin.saveSettings();
     };
-    skipLabel.createSpan({ text: ' 이미 생성된 노트 건너뛰기' });
+    skipLabel.createSpan({ text: ` ${t().cardEditor.skipGenerated}` });
 
     // Card type selection (same as current note mode)
     const typeSection = container.createDiv({ cls: 'sil-type-section' });
-    typeSection.createEl('label', { text: '카드 유형:' });
+    typeSection.createEl('label', { text: t().cardEditor.cardTypes });
 
     const typeCheckboxes = typeSection.createDiv({ cls: 'sil-type-checkboxes' });
     const cardTypes: { value: LearningCardType; label: string }[] = [
-      { value: 'flashcard', label: '플래시카드' },
-      { value: 'multiple_choice', label: '객관식' },
-      { value: 'fill_blank', label: '빈칸 채우기' },
-      { value: 'short_answer', label: '단답형' },
+      { value: 'flashcard', label: t().cardType.flashcard },
+      { value: 'multiple_choice', label: t().cardType.multiple_choice },
+      { value: 'fill_blank', label: t().cardType.fill_blank },
+      { value: 'short_answer', label: t().cardType.short_answer },
     ];
 
     cardTypes.forEach(type => {
@@ -1149,7 +1150,7 @@ export class InfoLearnView extends ItemView {
 
     // Count per type
     const countSection = container.createDiv({ cls: 'sil-count-section' });
-    countSection.createEl('label', { text: '유형당 카드 수:' });
+    countSection.createEl('label', { text: t().cardEditor.cardsPerType });
     const countSelect = countSection.createEl('select', { cls: 'sil-select sil-count-select' });
     [1, 2, 3, 5, 7, 10].forEach(num => {
       const opt = countSelect.createEl('option', { text: num.toString(), attr: { value: num.toString() } });
@@ -1161,7 +1162,7 @@ export class InfoLearnView extends ItemView {
 
     // Generate button
     const generateBtn = container.createEl('button', { cls: 'sil-generate-btn sil-primary-btn' });
-    generateBtn.innerHTML = '&#128640; 일괄 생성 시작';
+    generateBtn.innerHTML = `&#128640; ${t().cardEditor.startBatch}`;
     generateBtn.disabled = config.selectedTypes.length === 0 || batchProgress.isRunning;
     generateBtn.onclick = async () => {
       await this.handleBatchGeneration(config, settings);
@@ -1170,7 +1171,7 @@ export class InfoLearnView extends ItemView {
     // Progress display
     if (batchProgress.isRunning || batchProgress.processed > 0) {
       const progressSection = container.createDiv({ cls: 'sil-batch-progress' });
-      progressSection.createEl('h4', { text: '진행 상황' });
+      progressSection.createEl('h4', { text: t().cardEditor.progress });
 
       const progressBar = progressSection.createDiv({ cls: 'sil-progress-bar' });
       const progress = batchProgress.total > 0
@@ -1180,22 +1181,22 @@ export class InfoLearnView extends ItemView {
 
       const statsRow = progressSection.createDiv({ cls: 'sil-batch-stats' });
       statsRow.createSpan({
-        text: `${batchProgress.processed}/${batchProgress.total}개 노트 처리됨`,
+        text: t().cardEditor.notesProcessed(batchProgress.processed, batchProgress.total),
         cls: 'sil-stat'
       });
       statsRow.createSpan({
-        text: `${batchProgress.succeeded}개 성공`,
+        text: t().cardEditor.succeeded(batchProgress.succeeded),
         cls: 'sil-stat sil-stat-success'
       });
       if (batchProgress.failed.length > 0) {
         statsRow.createSpan({
-          text: `${batchProgress.failed.length}개 실패`,
+          text: t().cardEditor.failed(batchProgress.failed.length),
           cls: 'sil-stat sil-stat-error'
         });
       }
 
       if (!batchProgress.isRunning && batchProgress.processed > 0) {
-        const resetBtn = progressSection.createEl('button', { text: '진행 상황 지우기', cls: 'sil-btn' });
+        const resetBtn = progressSection.createEl('button', { text: t().cardEditor.clearProgress, cls: 'sil-btn' });
         resetBtn.onclick = () => {
           useAppStore.getState().resetBatchProgress();
           this.refresh();
@@ -1209,10 +1210,10 @@ export class InfoLearnView extends ItemView {
 
     // Header with title and delete button
     const headerDiv = existingSection.createDiv({ cls: 'sil-cards-header' });
-    headerDiv.createEl('h4', { text: `전체 카드 (${cards.length})` });
+    headerDiv.createEl('h4', { text: t().cardEditor.allCards(cards.length) });
 
     if (cards.length > 0) {
-      const deleteBtn = headerDiv.createEl('button', { text: '카드 삭제', cls: 'sil-delete-all-btn' });
+      const deleteBtn = headerDiv.createEl('button', { text: t().study.deleteCards, cls: 'sil-delete-all-btn' });
       deleteBtn.onclick = () => {
         const currentFile = this.app.workspace.getActiveFile();
         const modal = new DeleteCardsModal(
@@ -1232,7 +1233,7 @@ export class InfoLearnView extends ItemView {
             const remainingCards = cards.filter(c => !cardsToDelete.some(d => d.id === c.id));
             useAppStore.setState({ learningCards: remainingCards });
 
-            new Notice(`${cardsToDelete.length}개의 카드가 삭제되었습니다.`);
+            new Notice(t().notice.cardsDeleted(cardsToDelete.length));
             this.refresh();
           }
         );
@@ -1265,7 +1266,7 @@ export class InfoLearnView extends ItemView {
 
     if (cards.length > 10) {
       existingSection.createEl('p', {
-        text: `...외 ${cards.length - 10}개의 카드`,
+        text: t().cardEditor.moreCards(cards.length - 10),
         cls: 'sil-more-cards'
       });
     }
@@ -1278,7 +1279,7 @@ export class InfoLearnView extends ItemView {
     const modal = new ManualCardModal(this.app, sourceFile, async (result) => {
       await this.plugin.dataService.saveLearningCard(result.card);
       useAppStore.getState().addCard(result.card);
-      new Notice('카드가 생성되었습니다!');
+      new Notice(t().notice.cardsGenerated(1));
       this.refresh();
     });
 
@@ -1290,8 +1291,8 @@ export class InfoLearnView extends ItemView {
     config: GenerationConfig,
     settings: { trackInFrontmatter: boolean }
   ): Promise<void> {
-    if (!this.plugin.settings.providers[this.plugin.settings.defaultProvider]?.apiKey) {
-      new Notice('먼저 AI 제공자를 설정해주세요');
+    if (!this.plugin.settings.providers.find(p => p.id === this.plugin.settings.defaultProviderId)?.apiKey) {
+      new Notice(t().notice.configureProviderFirst);
       useAppStore.setState({ currentMode: 'settings' });
       return;
     }
@@ -1323,9 +1324,9 @@ export class InfoLearnView extends ItemView {
           await markAsGenerated(file, this.app);
         }
 
-        new Notice(`${result.cards.length}개의 학습 카드가 생성되었습니다!`);
+        new Notice(t().notice.cardsGenerated(result.cards.length));
       } else {
-        new Notice('텍스트에서 카드를 생성할 수 없습니다');
+        new Notice(t().notice.noCardsGenerated);
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -1340,8 +1341,8 @@ export class InfoLearnView extends ItemView {
     config: GenerationConfig,
     settings: { skipGeneratedNotes: boolean; trackInFrontmatter: boolean }
   ): Promise<void> {
-    if (!this.plugin.settings.providers[this.plugin.settings.defaultProvider]?.apiKey) {
-      new Notice('먼저 AI 제공자를 설정해주세요');
+    if (!this.plugin.settings.providers.find(p => p.id === this.plugin.settings.defaultProviderId)?.apiKey) {
+      new Notice(t().notice.configureProviderFirst);
       useAppStore.setState({ currentMode: 'settings' });
       return;
     }
@@ -1358,7 +1359,7 @@ export class InfoLearnView extends ItemView {
     }
 
     if (files.length === 0) {
-      new Notice('일치하는 노트를 찾을 수 없습니다');
+      new Notice(t().notice.noMatchingNotes);
       return;
     }
 
@@ -1431,13 +1432,13 @@ export class InfoLearnView extends ItemView {
 
     // Mark as complete
     useAppStore.getState().setBatchProgress({ isRunning: false });
-    new Notice(`일괄 생성 완료! ${useAppStore.getState().batchProgress.succeeded}개 노트가 처리되었습니다.`);
+    new Notice(t().notice.batchComplete(useAppStore.getState().batchProgress.succeeded));
     this.refresh();
   }
 
   private async handleGenerateCards(text: string): Promise<void> {
-    if (!this.plugin.settings.providers[this.plugin.settings.defaultProvider]?.apiKey) {
-      new Notice('먼저 AI 제공자를 설정해주세요');
+    if (!this.plugin.settings.providers.find(p => p.id === this.plugin.settings.defaultProviderId)?.apiKey) {
+      new Notice(t().notice.configureProviderFirst);
       useAppStore.setState({ currentMode: 'settings' });
       return;
     }
@@ -1456,9 +1457,9 @@ export class InfoLearnView extends ItemView {
           await this.plugin.dataService.saveLearningCard(card);
           useAppStore.getState().addCard(card);
         }
-        new Notice(`${result.cards.length}개의 학습 카드가 생성되었습니다!`);
+        new Notice(t().notice.cardsGenerated(result.cards.length));
       } else {
-        new Notice('텍스트에서 카드를 생성할 수 없습니다');
+        new Notice(t().notice.noCardsGenerated);
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -1470,75 +1471,64 @@ export class InfoLearnView extends ItemView {
 
   private renderSettingsMode(): void {
     const content = this.contentAreaEl.createDiv({ cls: 'sil-settings' });
-    content.createEl('h3', { text: '설정' });
+    content.createEl('h3', { text: t().settingsView.title });
 
-    const providers = ['openai', 'anthropic', 'gemini', 'grok', 'zhipu'] as const;
-    const currentProvider = this.plugin.settings.defaultProvider;
+    const state = useAppStore.getState();
+    const provider = state.providers.find(p => p.id === state.defaultProviderId);
+    const model = state.models.find(m => m.id === state.defaultModelId);
 
-    providers.forEach(provider => {
-      const config = this.plugin.settings.providers[provider];
-      const isDefault = currentProvider === provider;
+    // 현재 기본 AI 설정 표시
+    const infoDiv = content.createDiv({ cls: 'sil-provider default' });
 
-      const providerDiv = content.createDiv({ cls: `sil-provider ${isDefault ? 'default' : ''}` });
-
-      const header = providerDiv.createDiv({ cls: 'sil-provider-header' });
-      header.createEl('strong', { text: provider.toUpperCase() + (isDefault ? ' (기본)' : '') });
-      header.createSpan({
-        text: config.apiKey ? ' ✓ 설정됨' : ' 미설정',
-        cls: config.apiKey ? 'sil-ok' : 'sil-warn'
-      });
-
-      const apiKeyInput = providerDiv.createEl('input', {
-        attr: {
-          type: 'password',
-          placeholder: 'API 키...',
-          value: config.apiKey || ''
-        }
-      });
-
-      apiKeyInput.onchange = async () => {
-        await this.plugin.updateProviderConfig(provider, { apiKey: apiKeyInput.value });
-        this.refresh();
-      };
-
-      const actions = providerDiv.createDiv({ cls: 'sil-provider-actions' });
-
-      const testBtn = actions.createEl('button', { text: '테스트' });
-      testBtn.onclick = async () => {
-        testBtn.disabled = true;
-        testBtn.textContent = '테스트 중...';
-        try {
-          const ok = await this.plugin.aiService.testConnection(provider);
-          new Notice(ok ? `✓ ${provider} 연결됨!` : `✗ ${provider} 실패`);
-          testBtn.textContent = ok ? '✓ OK' : '✗ 실패';
-        } catch (e) {
-          new Notice(`오류: ${e}`);
-          testBtn.textContent = '✗ 오류';
-        }
-        testBtn.disabled = false;
-        setTimeout(() => { testBtn.textContent = '테스트'; }, 2000);
-      };
-
-      if (!isDefault) {
-        const setDefaultBtn = actions.createEl('button', { text: '기본으로 설정' });
-        setDefaultBtn.onclick = async () => {
-          await this.plugin.setDefaultProvider(provider);
-          this.refresh();
-        };
-      }
+    const header = infoDiv.createDiv({ cls: 'sil-provider-header' });
+    header.createEl('strong', { text: t().settingsView.defaultAI });
+    header.createSpan({
+      text: provider?.apiKey ? ` ${t().settingsView.configured}` : ` ${t().settingsView.notConfigured}`,
+      cls: provider?.apiKey ? 'sil-ok' : 'sil-warn',
     });
 
+    const detailDiv = infoDiv.createDiv({ cls: 'sil-settings-detail' });
+    detailDiv.createEl('p', { text: t().settingsView.provider(provider?.name || t().settingsView.notConfigured) });
+    detailDiv.createEl('p', { text: t().settingsView.model(model?.name || t().settingsView.notConfigured) });
+
+    // 연결 테스트 버튼
+    if (provider?.apiKey) {
+      const actions = infoDiv.createDiv({ cls: 'sil-provider-actions' });
+      const testBtn = actions.createEl('button', { text: t().settingsView.testConnection });
+      testBtn.onclick = async () => {
+        testBtn.disabled = true;
+        testBtn.textContent = t().common.testing;
+        try {
+          const ok = await this.plugin.aiService.testConnection(
+            state.defaultProviderId,
+            state.defaultModelId
+          );
+          new Notice(ok ? t().notice.connectionSuccess : t().notice.connectionFailed);
+          testBtn.textContent = ok ? `${t().common.success} OK` : `${t().common.failure} ${t().common.error}`;
+        } catch (e) {
+          new Notice(t().notice.errorPrefix(String(e)));
+          testBtn.textContent = `${t().common.failure} ${t().common.error}`;
+        }
+        testBtn.disabled = false;
+        setTimeout(() => { testBtn.textContent = t().settingsView.testConnection; }, 2000);
+      };
+    }
+
+    // 설정 안내
     const settingsLink = content.createDiv({ cls: 'sil-settings-link' });
-    settingsLink.createEl('p', { text: '더 많은 옵션은 다음에서 설정하세요:' });
-    settingsLink.createEl('strong', { text: '설정 → 커뮤니티 플러그인 → Star InfoLearn' });
+    settingsLink.createEl('p', { text: t().settingsView.settingsGuide });
+    settingsLink.createEl('strong', { text: t().settingsView.settingsPath });
   }
 
   private renderFooter(container: HTMLElement): void {
     const state = useAppStore.getState();
     const footer = container.createDiv({ cls: 'sil-footer' });
 
-    footer.createSpan({ text: `AI: ${state.currentAIProvider}` });
-    footer.createSpan({ text: state.isLoading ? ' | 처리 중...' : ' | 준비됨' });
+    const provider = state.providers.find(p => p.id === state.defaultProviderId);
+    const model = state.models.find(m => m.id === state.defaultModelId);
+
+    footer.createSpan({ text: t().footer.ai(provider?.name || state.defaultProviderId, model?.name || state.defaultModelId) });
+    footer.createSpan({ text: state.isLoading ? ` | ${t().common.processing}` : ` | ${t().common.ready}` });
   }
 
   private getCardTypeIcon(type: string): string {
@@ -1552,11 +1542,12 @@ export class InfoLearnView extends ItemView {
   }
 
   private getCardTypeName(type: string): string {
+    const tr = t();
     const names: Record<string, string> = {
-      'flashcard': '플래시카드',
-      'fill_blank': '빈칸 채우기',
-      'multiple_choice': '객관식',
-      'short_answer': '단답형',
+      'flashcard': tr.cardType.flashcard,
+      'fill_blank': tr.cardType.fill_blank,
+      'multiple_choice': tr.cardType.multiple_choice,
+      'short_answer': tr.cardType.short_answer,
     };
     return names[type] || type;
   }

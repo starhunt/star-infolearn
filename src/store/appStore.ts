@@ -4,7 +4,7 @@
  */
 
 import create from 'zustand';
-import { AIProvider, AIProviderConfig } from '../types/ai';
+import { AIProvider, AIProviderDefinition, AIModelDefinition, BUILT_IN_PROVIDERS, BUILT_IN_MODELS } from '../types/ai';
 import { LearningCard, LearningCardType, Deck, StudyPreferences, DEFAULT_STUDY_PREFERENCES } from '../types/learning';
 import { StudySession, LearningStats, SchedulingCards } from '../types/fsrs';
 
@@ -113,9 +113,12 @@ export interface AppStateData {
   isLoading: boolean;
   error: string | null;
 
-  // AI State
-  currentAIProvider: AIProvider;
-  aiProviders: Record<AIProvider, AIProviderConfig>;
+  // AI State (v2 - 동적 제공자/모델)
+  providers: AIProviderDefinition[];
+  models: AIModelDefinition[];
+  defaultProviderId: string;
+  defaultModelId: string;
+  slots: Record<string, { providerId: string; modelId: string }>;
 
   // Learning Cards
   learningCards: LearningCard[];
@@ -156,9 +159,11 @@ export interface AppState extends AppStateData {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 
-  // AI Actions
-  setAIProvider: (provider: AIProvider) => void;
-  updateAIProviderConfig: (provider: AIProvider, config: Partial<AIProviderConfig>) => void;
+  // AI Actions (v2)
+  setProviders: (providers: AIProviderDefinition[]) => void;
+  setModels: (models: AIModelDefinition[]) => void;
+  setDefaultProviderId: (id: string) => void;
+  setDefaultModelId: (id: string) => void;
 
   // Learning Cards Actions
   setLearningCards: (cards: LearningCard[]) => void;
@@ -230,14 +235,11 @@ const initialState: AppStateData = {
   selectedText: '',
   isLoading: false,
   error: null,
-  currentAIProvider: 'gemini' as AIProvider,
-  aiProviders: {
-    openai: { provider: 'openai' as AIProvider, apiKey: '', model: 'gpt-4-turbo' },
-    anthropic: { provider: 'anthropic' as AIProvider, apiKey: '', model: 'claude-3-opus' },
-    gemini: { provider: 'gemini' as AIProvider, apiKey: '', model: 'gemini-2.0-flash' },
-    grok: { provider: 'grok' as AIProvider, apiKey: '', model: 'grok-3' },
-    zhipu: { provider: 'zhipu' as AIProvider, apiKey: '', model: 'glm-4.7', baseUrl: 'https://open.bigmodel.cn/api/paas/v4' },
-  },
+  providers: [...BUILT_IN_PROVIDERS],
+  models: [...BUILT_IN_MODELS],
+  defaultProviderId: 'gemini',
+  defaultModelId: 'gemini-2.0-flash',
+  slots: {},
   learningCards: [],
   currentDeckId: null,
   decks: [],
@@ -290,19 +292,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
 
-  // AI Actions
-  setAIProvider: (provider) => set({ currentAIProvider: provider }),
-
-  updateAIProviderConfig: (provider, config) =>
-    set((state) => ({
-      aiProviders: {
-        ...state.aiProviders,
-        [provider]: {
-          ...state.aiProviders[provider],
-          ...config,
-        },
-      },
-    })),
+  // AI Actions (v2)
+  setProviders: (providers) => set({ providers }),
+  setModels: (models) => set({ models }),
+  setDefaultProviderId: (id) => set({ defaultProviderId: id }),
+  setDefaultModelId: (id) => set({ defaultModelId: id }),
 
   // Learning Cards Actions
   setLearningCards: (cards) => set({ learningCards: cards }),

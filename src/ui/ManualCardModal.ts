@@ -4,6 +4,7 @@
 
 import { Modal, App, Notice } from 'obsidian';
 import { LearningCard, LearningCardType, createLearningCard } from '../types/learning';
+import { t } from '../i18n';
 
 export interface ManualCardModalResult {
   card: LearningCard;
@@ -40,14 +41,14 @@ export class ManualCardModal extends Modal {
 
     // Header row with title and type selector
     const headerRow = contentEl.createDiv({ cls: 'sil-modal-header-row' });
-    headerRow.createEl('h3', { text: '수동 카드 생성' });
+    headerRow.createEl('h3', { text: t().manualCard.title });
 
     this.typeSelect = headerRow.createEl('select', { cls: 'sil-type-select-compact' });
     const types: { value: LearningCardType; label: string }[] = [
-      { value: 'flashcard', label: '플래시카드' },
-      { value: 'fill_blank', label: '빈칸 채우기' },
-      { value: 'multiple_choice', label: '객관식' },
-      { value: 'short_answer', label: '단답형' },
+      { value: 'flashcard', label: t().cardType.flashcard },
+      { value: 'fill_blank', label: t().cardType.fill_blank },
+      { value: 'multiple_choice', label: t().cardType.multiple_choice },
+      { value: 'short_answer', label: t().cardType.short_answer },
     ];
     types.forEach(type => {
       this.typeSelect.createEl('option', { text: type.label, attr: { value: type.value } });
@@ -58,24 +59,24 @@ export class ManualCardModal extends Modal {
 
     // Front (Question) - compact
     const frontWrapper = form.createDiv({ cls: 'sil-form-row' });
-    frontWrapper.createEl('label', { text: '질문' });
+    frontWrapper.createEl('label', { text: t().manualCard.question });
     this.frontInput = frontWrapper.createEl('textarea', {
-      attr: { placeholder: '질문 또는 앞면 내용...', rows: '2' },
+      attr: { placeholder: t().manualCard.questionPlaceholder, rows: '2' },
       cls: 'sil-input-compact'
     });
 
     // Back (Answer) - compact
     const backWrapper = form.createDiv({ cls: 'sil-form-row' });
-    backWrapper.createEl('label', { text: '정답' });
+    backWrapper.createEl('label', { text: t().manualCard.answer });
     this.backInput = backWrapper.createEl('textarea', {
-      attr: { placeholder: '정답 또는 뒷면 내용...', rows: '2' },
+      attr: { placeholder: t().manualCard.answerPlaceholder, rows: '2' },
       cls: 'sil-input-compact'
     });
 
     // MCQ options container (hidden by default)
     this.mcqWrapper = form.createDiv({ cls: 'sil-mcq-compact' });
     this.mcqWrapper.style.display = 'none';
-    this.mcqWrapper.createEl('label', { text: '선택지 (정답 체크)' });
+    this.mcqWrapper.createEl('label', { text: t().manualCard.options });
 
     const optionsGrid = this.mcqWrapper.createDiv({ cls: 'sil-options-grid' });
     for (let i = 0; i < 4; i++) {
@@ -83,7 +84,7 @@ export class ManualCardModal extends Modal {
       const checkbox = optionRow.createEl('input', { attr: { type: 'checkbox' } });
       const input = optionRow.createEl('input', {
         cls: 'sil-option-input-compact',
-        attr: { type: 'text', placeholder: `선택지 ${i + 1}` }
+        attr: { type: 'text', placeholder: t().manualCard.optionPlaceholder(i + 1) }
       });
       this.optionInputs.push({ input, checkbox });
     }
@@ -91,10 +92,10 @@ export class ManualCardModal extends Modal {
     // Buttons - inline at bottom
     const buttonRow = contentEl.createDiv({ cls: 'sil-modal-buttons-compact' });
 
-    const cancelBtn = buttonRow.createEl('button', { text: '취소', cls: 'sil-btn-compact' });
+    const cancelBtn = buttonRow.createEl('button', { text: t().common.cancel, cls: 'sil-btn-compact' });
     cancelBtn.onclick = () => this.close();
 
-    const createBtn = buttonRow.createEl('button', { text: '카드 생성', cls: 'sil-btn-compact sil-btn-primary-compact' });
+    const createBtn = buttonRow.createEl('button', { text: t().manualCard.createCard, cls: 'sil-btn-compact sil-btn-primary-compact' });
     createBtn.onclick = () => this.handleCreate();
   }
 
@@ -103,11 +104,11 @@ export class ManualCardModal extends Modal {
     this.mcqWrapper.style.display = type === 'multiple_choice' ? 'block' : 'none';
 
     if (type === 'fill_blank') {
-      this.frontInput.placeholder = '빈칸은 ___ 로 표시...';
-      this.backInput.placeholder = '빈칸에 들어갈 정답...';
+      this.frontInput.placeholder = t().manualCard.blankQuestionPlaceholder;
+      this.backInput.placeholder = t().manualCard.blankAnswerPlaceholder;
     } else {
-      this.frontInput.placeholder = '질문 또는 앞면 내용...';
-      this.backInput.placeholder = '정답 또는 뒷면 내용...';
+      this.frontInput.placeholder = t().manualCard.questionPlaceholder;
+      this.backInput.placeholder = t().manualCard.answerPlaceholder;
     }
   }
 
@@ -116,7 +117,7 @@ export class ManualCardModal extends Modal {
     const back = this.backInput.value.trim();
 
     if (!front || !back) {
-      new Notice('질문과 정답을 모두 입력하세요');
+      new Notice(t().notice.enterQuestion);
       return;
     }
 
@@ -133,11 +134,11 @@ export class ManualCardModal extends Modal {
         }));
 
       if (options.length < 2) {
-        new Notice('객관식은 최소 2개의 선택지가 필요합니다');
+        new Notice(t().notice.mcqMinOptions);
         return;
       }
       if (!options.some(o => o.isCorrect)) {
-        new Notice('정답을 하나 이상 선택하세요');
+        new Notice(t().notice.mcqSelectCorrect);
         return;
       }
     }

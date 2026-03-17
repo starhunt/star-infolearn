@@ -1,0 +1,340 @@
+/**
+ * 한국어 번역
+ */
+export const ko = {
+  // ── 공통 ──
+  common: {
+    save: '저장',
+    cancel: '취소',
+    delete: '삭제',
+    edit: '편집',
+    test: '테스트',
+    testing: '...',
+    close: '닫기',
+    confirm: '확인',
+    add: '추가',
+    enabled: '활성화',
+    back: '뒤로',
+    refresh: '새로고침',
+    processing: '처리 중...',
+    ready: '준비됨',
+    success: '✓',
+    failure: '✗',
+    error: '오류',
+    loading: '로딩 중...',
+    custom: '사용자 정의',
+    none: '없음',
+  },
+
+  // ── 카드 유형 ──
+  cardType: {
+    flashcard: '플래시카드',
+    fill_blank: '빈칸 채우기',
+    multiple_choice: '객관식',
+    short_answer: '단답형',
+  },
+
+  // ── 알림 ──
+  notice: {
+    connectionSuccess: '✓ 연결 성공!',
+    connectionFailed: '✗ 연결 실패',
+    apiKeyNotSet: 'API 키가 설정되지 않았습니다.',
+    apiKeyRequired: 'API 키가 필요합니다. 모델 키 또는 제공자 키를 설정해주세요.',
+    configureProviderFirst: '먼저 AI 제공자를 설정해주세요',
+    noCardsDue: '복습할 카드가 없습니다!',
+    selectTextFirst: '텍스트를 먼저 선택해주세요',
+    generatingCards: '카드 생성 중...',
+    cardsGenerated: (n: number) => `${n}개의 학습 카드가 생성되었습니다!`,
+    noCardsGenerated: '텍스트에서 카드를 생성할 수 없습니다',
+    cardsDeleted: (n: number) => `${n}개의 카드가 삭제되었습니다.`,
+    noMatchingNotes: '일치하는 노트를 찾을 수 없습니다',
+    batchComplete: (n: number) => `일괄 생성 완료! ${n}개 노트가 처리되었습니다.`,
+    defaultSet: (provider: string, model: string) => `기본 설정: ${provider} / ${model}`,
+    providerConnected: (name: string) => `${name} 연결 성공!`,
+    providerFailed: (name: string) => `${name} 연결 실패. API 키를 확인하세요.`,
+    providerTesting: (name: string) => `${name} 연결 테스트 중...`,
+    reviewComplete: '복습 세션 완료!',
+    errorPrefix: (msg: string) => `오류: ${msg}`,
+    enterQuestion: '질문과 정답을 모두 입력하세요',
+    mcqMinOptions: '객관식은 최소 2개의 선택지가 필요합니다',
+    mcqSelectCorrect: '정답을 하나 이상 선택하세요',
+    enterModelId: '모델 ID를 먼저 입력해주세요.',
+    selectProvider: '공급자를 선택해주세요.',
+    enterProviderName: '제공자 이름을 입력해주세요.',
+    enterBaseUrl: '기본 URL을 입력해주세요.',
+    duplicateProviderId: '이미 등록된 제공자 ID입니다.',
+    enterModelName: '모델 이름을 입력해주세요.',
+    enterModelIdRequired: '모델 ID를 입력해주세요.',
+    duplicateModelId: '이미 등록된 모델 ID입니다.',
+  },
+
+  // ── 설정 탭 ──
+  settings: {
+    title: 'Star InfoLearn 설정',
+    defaultAI: '기본 AI',
+    defaultAIDesc: '카드 생성에 사용할 제공자와 모델',
+    noModels: '(모델 없음)',
+    useDefaultAI: '(기본 AI 사용)',
+
+    // 제공자
+    providers: '제공자',
+    apiKeySet: 'API 키 설정됨',
+    apiKeyNotSet: 'API 키 미설정',
+    default: '기본',
+    addProvider: '+ 제공자 추가',
+
+    // 모델
+    models: '모델',
+    dedicatedKey: '전용 키',
+    setAsDefault: '기본으로 설정',
+    addModel: '+ 모델 추가',
+
+    // 슬롯
+    imageGeneration: '이미지 생성',
+    imageGenerationDesc: '이미지 생성에 사용할 AI (예: DALL-E, Stable Diffusion)',
+
+    // 카드 생성
+    cardGeneration: '카드 생성 설정',
+    defaultCardTypes: '기본 카드 유형',
+    defaultCardTypesDesc: '생성 시 기본 선택되는 카드 유형',
+    cardsPerType: '유형당 기본 카드 수',
+    cardsPerTypeDesc: '선택한 유형별 생성할 카드 수',
+    skipGenerated: '생성된 노트 건너뛰기',
+    skipGeneratedDesc: '배치 생성 시 이미 카드가 있는 노트 건너뛰기',
+    trackFrontmatter: '프런트매터에 추적',
+    trackFrontmatterDesc: '카드 생성 후 노트에 sil-cards-generated 속성 추가',
+
+    // 기타
+    apiKeyLocalOnly: 'API 키는 로컬에만 저장되며 외부로 전송되지 않습니다.',
+    language: '언어',
+    languageDesc: '플러그인 인터페이스 언어',
+    languageAuto: '자동 감지',
+  },
+
+  // ── 제공자 모달 ──
+  providerModal: {
+    titleAdd: '제공자 추가',
+    titleEdit: '제공자 편집',
+    provider: '공급자',
+    providerDesc: '기본 공급자를 선택하거나 사용자 정의 공급자를 생성하십시오.',
+    name: '제공자 이름',
+    nameDesc: '이 제공자의 표시 이름.',
+    namePlaceholder: '제공자 이름',
+    baseUrl: '기본 URL',
+    baseUrlDesc: '이 제공자를 위한 API 엔드포인트 URL입니다.',
+    baseUrlPlaceholder: 'https://api.example.com/v1',
+    apiKey: 'API 키',
+    apiKeyDesc: '이 제공자를 위한 API 키입니다.',
+    apiKeyPlaceholder: 'API 키',
+    authType: '인증 방식',
+    authTypeDesc: 'API 인증에 사용할 헤더 형식.',
+    authBearer: 'Bearer Token (Authorization)',
+    authXApiKey: 'x-api-key Header',
+    apiFormat: 'API 형식',
+    apiFormatDesc: 'API 호출 형식. 대부분 OpenAI 호환을 사용합니다.',
+    apiFormatOpenAI: 'OpenAI 호환 (/chat/completions)',
+    apiFormatAnthropic: 'Anthropic (/messages)',
+  },
+
+  // ── 모델 모달 ──
+  modelModal: {
+    titleAdd: '모델 추가',
+    titleEdit: '모델 편집',
+    provider: '공급자',
+    providerDesc: '모델 제공자 (예: Ollama, OpenRouter, Google 등)',
+    name: '모델 이름',
+    nameDesc: '인터페이스에 표시할 모델 이름입니다.',
+    namePlaceholder: '모델 이름',
+    modelId: '모델 ID',
+    modelIdDesc: '제공자의 모델 식별자입니다. 일반적으로 공백이 없는 짧은 이름입니다.',
+    modelIdPlaceholder: '모델 ID',
+    apiKey: 'API 키 (선택)',
+    apiKeyDesc: '미입력 시 제공자의 API 키를 사용합니다.',
+    apiKeyPlaceholder: '모델 전용 API 키',
+  },
+
+  // ── 메인 뷰: 웰컴 ──
+  welcome: {
+    title: 'Star InfoLearn에 오신 것을 환영합니다',
+    subtitle: 'Obsidian을 위한 AI 기반 플래시카드 학습',
+    startStudy: '학습 시작하기',
+    createCards: '카드 만들기',
+    features: '주요 기능:',
+    feature1: 'FSRS 간격 반복 학습',
+    feature2: 'AI 기반 플래시카드 자동 생성',
+    feature3: '4가지 학습 카드 유형',
+    feature4: '노트 기반 학습 카드 관리',
+    tip: '팁: 노트에서 텍스트를 선택하고 우클릭하여 플래시카드를 생성하세요!',
+  },
+
+  // ── 메인 뷰: 헤더 ──
+  header: {
+    title: 'Star InfoLearn',
+    cardCount: (total: number, due: number) => `${total}개 카드 | 오늘 ${due}개 복습 예정`,
+    selected: '선택됨: ',
+  },
+
+  // ── 모드 이름 ──
+  mode: {
+    study: '학습',
+    review: '복습',
+    'card-editor': '카드 생성',
+    settings: '설정',
+  },
+
+  // ── 학습 대시보드 ──
+  study: {
+    title: '학습 대시보드',
+    totalCards: '전체 카드',
+    reviewedToday: '오늘 복습',
+    newCards: '새 카드',
+    inReview: '복습 중',
+    quickActions: '빠른 실행',
+    reviewCards: (n: number) => `${n}개 카드 복습하기`,
+    noCardsMessage: '복습할 카드가 없습니다! 카드를 만들어 학습을 시작하세요.',
+    createCards: '카드 만들기',
+    deleteCards: '카드 삭제',
+    recentCards: '최근 카드',
+    cardTypes: '카드 유형',
+  },
+
+  // ── 복습 세션 ──
+  review: {
+    title: '복습 세션',
+    selectScope: '복습 범위 선택',
+    scopeAll: '전체',
+    scopeAllDesc: (n: number) => `모든 복습 카드 (${n}개)`,
+    scopeCurrentNote: '현재 노트',
+    scopeCurrentNoteDesc: '현재 열린 노트의 카드만',
+    scopeFolder: '폴더 선택',
+    scopeFolderDesc: '특정 폴더의 카드만',
+    scopeDateRange: '기간 선택',
+    scopeDateRangeDesc: '특정 기간에 생성된 카드만',
+    selectFolder: '폴더 선택:',
+    dateRange: '기간:',
+    dateSeparator: '~',
+    allComplete: '모두 완료!',
+    noMoreCards: '복습할 카드가 없습니다. 나중에 다시 확인하세요!',
+    backToDashboard: '← 대시보드로 돌아가기',
+    startReview: (n: number) => `복습 시작 (${n}개)`,
+    cardNotFound: '카드를 찾을 수 없습니다',
+    progress: (current: number, total: number) => `${current} / ${total}`,
+    hint: '힌트: ',
+    showAnswer: '정답 보기',
+    noOptions: '선택지가 없습니다',
+    correct: '✓ 정답!',
+    incorrect: '✗ 오답',
+    submitAnswer: '답안 제출',
+    fillBlanks: '빈칸을 채우세요:',
+    blankN: (n: number) => `빈칸 ${n}: `,
+    answerPlaceholder: '답을 입력하세요...',
+    allCorrect: '✓ 모두 정답!',
+    someIncorrect: '✗ 일부 오답이 있습니다',
+    checkAnswer: '정답 확인',
+    myAnswer: '내 답변: ',
+    notEntered: '(미입력)',
+    correctAnswer: '정답: ',
+    rateMemory: '얼마나 잘 기억하셨나요?',
+    ratingAgain: '다시',
+    ratingAgainDesc: '완전히 잊음',
+    ratingHard: '어려움',
+    ratingHardDesc: '겨우 기억함',
+    ratingGood: '보통',
+    ratingGoodDesc: '정확히 기억',
+    ratingEasy: '쉬움',
+    ratingEasyDesc: '완벽히 기억',
+  },
+
+  // ── 카드 에디터 ──
+  cardEditor: {
+    title: 'AI 카드 생성',
+    currentNote: '현재 노트',
+    batchGenerate: '일괄 생성',
+    manualCreate: '수동으로 카드 만들기',
+    generating: '카드 생성 중...',
+    noActiveNote: '열린 노트가 없습니다. 카드를 생성하려면 노트를 열어주세요.',
+    selectedText: '선택된 텍스트:',
+    cardTypes: '생성할 카드 유형:',
+    cardsPerType: '유형당 카드 수:',
+    generateButton: '카드 생성하기',
+    selectFolder: '폴더 선택:',
+    rootFolder: '/ (루트)',
+    includeSubfolders: '하위 폴더 포함',
+    dateRangeOptional: '날짜 범위 (선택):',
+    skipGenerated: '이미 생성된 노트 건너뛰기',
+    startBatch: '일괄 생성 시작',
+    progress: '진행 상황',
+    notesProcessed: (done: number, total: number) => `${done}/${total}개 노트 처리됨`,
+    succeeded: (n: number) => `${n}개 성공`,
+    failed: (n: number) => `${n}개 실패`,
+    clearProgress: '진행 상황 지우기',
+    allCards: (n: number) => `전체 카드 (${n})`,
+    moreCards: (n: number) => `...외 ${n}개의 카드`,
+    existingCards: (n: number) => `${n}개의 카드`,
+  },
+
+  // ── 설정 모드 (메인 뷰) ──
+  settingsView: {
+    title: '설정',
+    defaultAI: '기본 AI',
+    configured: '✓ 설정됨',
+    notConfigured: '미설정',
+    provider: (name: string) => `제공자: ${name}`,
+    model: (name: string) => `모델: ${name}`,
+    testConnection: '연결 테스트',
+    settingsGuide: '제공자 및 모델 관리는 다음에서 설정하세요:',
+    settingsPath: '설정 → 커뮤니티 플러그인 → Star InfoLearn',
+  },
+
+  // ── 수동 카드 모달 ──
+  manualCard: {
+    title: '수동 카드 생성',
+    question: '질문',
+    questionPlaceholder: '질문 또는 앞면 내용...',
+    answer: '정답',
+    answerPlaceholder: '정답 또는 뒷면 내용...',
+    blankQuestionPlaceholder: '빈칸은 ___ 로 표시...',
+    blankAnswerPlaceholder: '빈칸에 들어갈 정답...',
+    options: '선택지 (정답 체크)',
+    optionPlaceholder: (n: number) => `선택지 ${n}`,
+    createCard: '카드 생성',
+  },
+
+  // ── 삭제 모달 ──
+  deleteModal: {
+    title: '카드 삭제',
+    deleteAll: '전체 삭제',
+    deleteAllDesc: (n: number) => `모든 카드 삭제 (${n}개)`,
+    deleteByNote: '노트별 삭제',
+    deleteByNoteDesc: '특정 노트의 카드만 삭제',
+    deleteByDate: '기간별 삭제',
+    deleteByDateDesc: '특정 기간에 생성된 카드 삭제',
+    selectNote: '노트 선택:',
+    currentNote: (name: string) => `현재 노트: ${name}`,
+    noteCards: (name: string, n: number) => `${name} (${n}개)`,
+    dateRange: '기간:',
+    warning: '삭제된 카드는 복구할 수 없습니다.',
+    noCardsToDelete: '삭제할 카드가 없습니다',
+    cardsWillBeDeleted: (n: number) => `${n}개의 카드가 삭제됩니다`,
+    confirmDelete: (n: number) => `정말로 ${n}개의 카드를 삭제하시겠습니까?`,
+  },
+
+  // ── 커맨드 ──
+  command: {
+    openPlugin: 'Open Star InfoLearn',
+    openDashboard: 'Open Study Dashboard',
+    startReview: 'Start Review Session',
+    createFlashcards: 'Create Flashcards',
+    generateFromSelection: 'Generate Flashcards from Selection',
+    testConnection: 'Test AI Connection',
+    generateFlashcards: 'Generate Flashcards',
+    quickGenerate: 'Quick Generate with AI',
+  },
+
+  // ── 푸터 ──
+  footer: {
+    ai: (provider: string, model: string) => `AI: ${provider} / ${model}`,
+  },
+};
+
+export type TranslationKeys = typeof ko;

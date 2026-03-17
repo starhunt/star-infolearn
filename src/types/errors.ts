@@ -2,7 +2,7 @@
  * Custom Error Types for InfoLearn Pro
  */
 
-import { AIProvider } from './ai';
+// string는 string 타입이므로 직접 string 사용
 
 /**
  * Base error class for InfoLearn Pro
@@ -23,7 +23,7 @@ export class InfoLearnError extends Error {
 export class AIServiceError extends InfoLearnError {
   constructor(
     message: string,
-    public readonly provider: AIProvider,
+    public readonly provider: string,
     public readonly statusCode?: number,
     public readonly originalError?: unknown
   ) {
@@ -31,7 +31,7 @@ export class AIServiceError extends InfoLearnError {
     this.name = 'AIServiceError';
   }
 
-  static fromAxiosError(provider: AIProvider, error: unknown): AIServiceError {
+  static fromAxiosError(provider: string, error: unknown): AIServiceError {
     if (isAxiosError(error)) {
       const status = error.response?.status;
       const message = error.response?.data?.error?.message
@@ -59,7 +59,7 @@ export class AIServiceError extends InfoLearnError {
  * Provider not configured error
  */
 export class ProviderNotConfiguredError extends AIServiceError {
-  constructor(provider: AIProvider) {
+  constructor(provider: string) {
     super(`Provider ${provider} is not configured`, provider);
     this.name = 'ProviderNotConfiguredError';
   }
@@ -69,7 +69,7 @@ export class ProviderNotConfiguredError extends AIServiceError {
  * API key not set error
  */
 export class ApiKeyNotSetError extends AIServiceError {
-  constructor(provider: AIProvider) {
+  constructor(provider: string) {
     super(`API key not set for ${provider}`, provider);
     this.name = 'ApiKeyNotSetError';
   }
@@ -80,7 +80,7 @@ export class ApiKeyNotSetError extends AIServiceError {
  */
 export class RateLimitError extends AIServiceError {
   constructor(
-    provider: AIProvider,
+    provider: string,
     public readonly retryAfter?: number
   ) {
     super(`Rate limit exceeded for ${provider}`, provider, 429);

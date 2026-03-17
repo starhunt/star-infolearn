@@ -4,6 +4,7 @@
 
 import { Modal, App, Notice, TFile } from 'obsidian';
 import { LearningCard } from '../types/learning';
+import { t } from '../i18n';
 
 export type DeleteMode = 'all' | 'by-note' | 'by-date';
 
@@ -45,15 +46,15 @@ export class DeleteCardsModal extends Modal {
 
     // Title
     const header = contentEl.createDiv({ cls: 'sil-delete-modal-header' });
-    header.createEl('h3', { text: '🗑️ 카드 삭제' });
+    header.createEl('h3', { text: `🗑️ ${t().deleteModal.title}` });
 
     // Mode selection
     const modeSection = contentEl.createDiv({ cls: 'sil-delete-mode-section' });
 
     const modes: { id: DeleteMode; label: string; desc: string }[] = [
-      { id: 'all', label: '전체 삭제', desc: `모든 카드 삭제 (${this.allCards.length}개)` },
-      { id: 'by-note', label: '노트별 삭제', desc: '특정 노트의 카드만 삭제' },
-      { id: 'by-date', label: '기간별 삭제', desc: '특정 기간에 생성된 카드 삭제' },
+      { id: 'all', label: t().deleteModal.deleteAll, desc: t().deleteModal.deleteAllDesc(this.allCards.length) },
+      { id: 'by-note', label: t().deleteModal.deleteByNote, desc: t().deleteModal.deleteByNoteDesc },
+      { id: 'by-date', label: t().deleteModal.deleteByDate, desc: t().deleteModal.deleteByDateDesc },
     ];
 
     modes.forEach(mode => {
@@ -85,7 +86,7 @@ export class DeleteCardsModal extends Modal {
 
     // Note filter
     const noteFilterDiv = filterSection.createDiv({ cls: 'sil-filter-option sil-note-filter' });
-    noteFilterDiv.createEl('label', { text: '노트 선택:' });
+    noteFilterDiv.createEl('label', { text: t().deleteModal.selectNote });
     this.noteSelect = noteFilterDiv.createEl('select', { cls: 'sil-select-compact' });
 
     // Get unique source files
@@ -94,7 +95,7 @@ export class DeleteCardsModal extends Modal {
     // Add current file option first if available
     if (this.currentFile) {
       const currentOpt = this.noteSelect.createEl('option', {
-        text: `📄 현재 노트: ${this.currentFile.basename}`,
+        text: `📄 ${t().deleteModal.currentNote(this.currentFile.basename)}`,
         attr: { value: this.currentFile.path }
       });
       currentOpt.selected = true;
@@ -105,7 +106,7 @@ export class DeleteCardsModal extends Modal {
         const count = this.allCards.filter(c => c.sourceFile === file).length;
         const basename = file.split('/').pop() || file;
         this.noteSelect.createEl('option', {
-          text: `${basename} (${count}개)`,
+          text: t().deleteModal.noteCards(basename, count),
           attr: { value: file }
         });
       }
@@ -115,14 +116,14 @@ export class DeleteCardsModal extends Modal {
 
     // Date filter
     const dateFilterDiv = filterSection.createDiv({ cls: 'sil-filter-option sil-date-filter' });
-    dateFilterDiv.createEl('label', { text: '기간:' });
+    dateFilterDiv.createEl('label', { text: t().deleteModal.dateRange });
 
     const dateRow = dateFilterDiv.createDiv({ cls: 'sil-date-filter-row' });
     this.dateFromInput = dateRow.createEl('input', {
       attr: { type: 'date' },
       cls: 'sil-date-input-compact'
     });
-    dateRow.createSpan({ text: '~' });
+    dateRow.createSpan({ text: t().review.dateSeparator });
     this.dateToInput = dateRow.createEl('input', {
       attr: { type: 'date' },
       cls: 'sil-date-input-compact'
@@ -143,15 +144,15 @@ export class DeleteCardsModal extends Modal {
 
     // Warning
     const warning = contentEl.createDiv({ cls: 'sil-delete-warning' });
-    warning.innerHTML = '⚠️ 삭제된 카드는 복구할 수 없습니다.';
+    warning.innerHTML = `⚠️ ${t().deleteModal.warning}`;
 
     // Buttons
     const buttonRow = contentEl.createDiv({ cls: 'sil-modal-buttons-compact' });
 
-    const cancelBtn = buttonRow.createEl('button', { text: '취소', cls: 'sil-btn-compact' });
+    const cancelBtn = buttonRow.createEl('button', { text: t().common.cancel, cls: 'sil-btn-compact' });
     cancelBtn.onclick = () => this.close();
 
-    const deleteBtn = buttonRow.createEl('button', { text: '삭제', cls: 'sil-btn-compact sil-btn-danger' });
+    const deleteBtn = buttonRow.createEl('button', { text: t().common.delete, cls: 'sil-btn-compact sil-btn-danger' });
     deleteBtn.onclick = () => this.handleDelete();
 
     // Initial state
@@ -191,9 +192,9 @@ export class DeleteCardsModal extends Modal {
     const count = cards.length;
 
     if (count === 0) {
-      this.previewCount.innerHTML = '<span class="sil-preview-empty">삭제할 카드가 없습니다</span>';
+      this.previewCount.innerHTML = `<span class="sil-preview-empty">${t().deleteModal.noCardsToDelete}</span>`;
     } else {
-      this.previewCount.innerHTML = `<span class="sil-preview-number">${count}</span>개의 카드가 삭제됩니다`;
+      this.previewCount.textContent = t().deleteModal.cardsWillBeDeleted(count);
     }
   }
 
@@ -201,12 +202,11 @@ export class DeleteCardsModal extends Modal {
     const cardsToDelete = this.getCardsToDelete();
 
     if (cardsToDelete.length === 0) {
-      new Notice('삭제할 카드가 없습니다');
+      new Notice(t().deleteModal.noCardsToDelete);
       return;
     }
 
-    const confirmMsg = `정말로 ${cardsToDelete.length}개의 카드를 삭제하시겠습니까?`;
-    if (!confirm(confirmMsg)) {
+    if (!confirm(t().deleteModal.confirmDelete(cardsToDelete.length))) {
       return;
     }
 
