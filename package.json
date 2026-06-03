@@ -1,7 +1,7 @@
 {
   "name": "star-infolearn",
-  "version": "1.1.1",
-  "description": "Turn Obsidian notes into interactive learning cards with AI-assisted quizzes, cloze blanks, and review workflows.",
+  "version": "1.1.2",
+  "description": "Turn notes into interactive learning cards with AI-assisted quizzes, cloze blanks, and review workflows.",
   "main": "main.js",
   "types": "main.d.ts",
   "scripts": {
