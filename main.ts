@@ -219,9 +219,8 @@ export default class StarInfoLearn extends Plugin {
 
     await this.loadSettings();
 
-    // 언어 감지: Obsidian locale → moment locale → localStorage → 'en' 순
+    // 언어 감지: Obsidian locale → moment locale → 'en' 순
     const obsidianLocale = (this.app as any).locale
-      || window.localStorage.getItem('language')
       || window.moment?.locale()
       || 'en';
     setDetectedLocale(obsidianLocale);

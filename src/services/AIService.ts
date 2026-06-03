@@ -2,34 +2,98 @@
  * AI Service - 동적 제공자/모델 기반 AI 통신 (v2)
  */
 
-import axios, { AxiosInstance } from 'axios';
 import { AIProviderDefinition, AIModelDefinition, AIServiceConfig } from '../types/ai';
 import { AIServiceError, ProviderNotConfiguredError, ApiKeyNotSetError, RateLimitError, isAxiosError } from '../types/errors';
 import { LearningCard, LearningCardType, createLearningCard, QuestionGenerationRequest, QuestionGenerationResult, AnswerEvaluation } from '../types/learning';
 
+
+interface ApiResponse<T = any> {
+  data: T;
+  status: number;
+}
+
+class ApiClient {
+  constructor(
+    private readonly baseUrl: string,
+    private readonly headers: Record<string, string>,
+    private readonly timeoutMs: number
+  ) {}
+
+  async post<T = any>(path: string, body: unknown): Promise<ApiResponse<T>> {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), this.timeoutMs);
+    try {
+      const response = await fetch(this.buildUrl(path), {
+        method: 'POST',
+        headers: this.headers,
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      const data = await this.parseResponse(response);
+      if (!response.ok) {
+        throw this.toHttpError(response.status, data, response.statusText);
+      }
+      return { data, status: response.status };
+    } catch (error) {
+      if (isAxiosError(error)) {
+        throw error;
+      }
+      if (error instanceof Error) {
+        throw this.toHttpError(undefined, undefined, error.message);
+      }
+      throw this.toHttpError(undefined, undefined, String(error));
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
+
+  private buildUrl(path: string): string {
+    return `${this.baseUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+  }
+
+  private async parseResponse(response: Response): Promise<any> {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { message: text };
+    }
+  }
+
+  private toHttpError(status: number | undefined, data: any, message: string): Error & {
+    isAxiosError: true;
+    response?: { status?: number; data?: any };
+  } {
+    const error = new Error(message || 'HTTP request failed') as Error & {
+      isAxiosError: true;
+      response?: { status?: number; data?: any };
+    };
+    error.isAxiosError = true;
+    error.response = { status, data };
+    return error;
+  }
+}
+
 export class AIService {
   private config: AIServiceConfig;
-  private axiosInstances: Map<string, AxiosInstance> = new Map();
+  private clients: Map<string, ApiClient> = new Map();
 
   constructor(config: AIServiceConfig) {
     this.config = config;
-    this.initializeAxiosInstances();
+    this.initializeClients();
   }
 
-  private initializeAxiosInstances(): void {
+  private initializeClients(): void {
     for (const provider of this.config.providers) {
       if (provider.apiKey) {
-        this.axiosInstances.set(provider.id, this.createAxiosInstance(provider));
+        this.clients.set(provider.id, this.createClient(provider));
       }
     }
   }
 
-  private createAxiosInstance(provider: AIProviderDefinition): AxiosInstance {
-    return axios.create({
-      baseURL: provider.baseUrl,
-      timeout: 300000,
-      headers: this.getHeaders(provider),
-    });
+  private createClient(provider: AIProviderDefinition): ApiClient {
+    return new ApiClient(provider.baseUrl, this.getHeaders(provider), 300000);
   }
 
   private getHeaders(provider: AIProviderDefinition): Record<string, string> {
@@ -61,20 +125,20 @@ export class AIService {
   }
 
   /** 모델에 개별 API 키가 있으면 해당 키로 인스턴스 생성 */
-  private getInstanceForModel(provider: AIProviderDefinition, model?: AIModelDefinition): AxiosInstance {
-    // 모델 전용 API 키가 있으면 별도 인스턴스 생성
+  private getClientForModel(provider: AIProviderDefinition, model?: AIModelDefinition): ApiClient {
+    // 모델 전용 API 키가 있으면 별도 클라이언트 생성
     if (model?.apiKey) {
       const overridden: AIProviderDefinition = { ...provider, apiKey: model.apiKey };
-      return this.createAxiosInstance(overridden);
+      return this.createClient(overridden);
     }
 
-    // 제공자 기본 인스턴스 사용 (없으면 생성)
-    const existing = this.axiosInstances.get(provider.id);
+    // 제공자 기본 클라이언트 사용 (없으면 생성)
+    const existing = this.clients.get(provider.id);
     if (existing) return existing;
 
-    const newInstance = this.createAxiosInstance(provider);
-    this.axiosInstances.set(provider.id, newInstance);
-    return newInstance;
+    const newClient = this.createClient(provider);
+    this.clients.set(provider.id, newClient);
+    return newClient;
   }
 
   /** 현재 기본 제공자+모델로 AI 호출 */
@@ -90,22 +154,22 @@ export class AIService {
       throw new ApiKeyNotSetError(this.config.defaultProviderId);
     }
 
-    const instance = this.getInstanceForModel(provider, model);
-    return this.callWithInstance(instance, provider, this.config.defaultModelId, prompt);
+    const client = this.getClientForModel(provider, model);
+    return this.callWithClient(client, provider, this.config.defaultModelId, prompt);
   }
 
-  /** 인스턴스를 사용한 실제 호출 */
-  private async callWithInstance(
-    instance: AxiosInstance,
+  /** 클라이언트를 사용한 실제 호출 */
+  private async callWithClient(
+    client: ApiClient,
     provider: AIProviderDefinition,
     modelId: string,
     prompt: string
   ): Promise<string> {
     try {
       if (provider.apiFormat === 'anthropic') {
-        return await this.callAnthropic(instance, modelId, prompt);
+        return await this.callAnthropic(client, modelId, prompt);
       }
-      return await this.callOpenAICompatible(instance, modelId, prompt);
+      return await this.callOpenAICompatible(client, modelId, prompt);
     } catch (error) {
       if (error instanceof AIServiceError) {
         throw error;
@@ -120,11 +184,11 @@ export class AIService {
 
   /** OpenAI 호환 API 호출 (Gemini, OpenAI, z.ai, Grok 등) */
   private async callOpenAICompatible(
-    instance: AxiosInstance,
+    client: ApiClient,
     model: string,
     prompt: string
   ): Promise<string> {
-    const response = await instance.post('/chat/completions', {
+    const response = await client.post('/chat/completions', {
       model,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
@@ -135,11 +199,11 @@ export class AIService {
 
   /** Anthropic API 호출 */
   private async callAnthropic(
-    instance: AxiosInstance,
+    client: ApiClient,
     model: string,
     prompt: string
   ): Promise<string> {
-    const response = await instance.post('/messages', {
+    const response = await client.post('/messages', {
       model,
       max_tokens: 16000,
       messages: [{ role: 'user', content: prompt }],
@@ -168,17 +232,17 @@ export class AIService {
       }
 
       const testProvider: AIProviderDefinition = { ...provider, apiKey: effectiveApiKey };
-      const testInstance = this.createAxiosInstance(testProvider);
+      const testClient = this.createClient(testProvider);
       const testPrompt = 'Say "OK" only.';
 
       if (provider.apiFormat === 'anthropic') {
-        await testInstance.post('/messages', {
+        await testClient.post('/messages', {
           model: testModel,
           max_tokens: 10,
           messages: [{ role: 'user', content: testPrompt }],
         });
       } else {
-        await testInstance.post('/chat/completions', {
+        await testClient.post('/chat/completions', {
           model: testModel,
           messages: [{ role: 'user', content: testPrompt }],
           max_tokens: 10,
@@ -187,7 +251,6 @@ export class AIService {
 
       return true;
     } catch (error) {
-      console.error(`Connection test failed for ${providerId}:`, error);
       return false;
     }
   }
@@ -195,8 +258,8 @@ export class AIService {
   /** 설정 업데이트 */
   updateConfig(config: AIServiceConfig): void {
     this.config = config;
-    this.axiosInstances.clear();
-    this.initializeAxiosInstances();
+    this.clients.clear();
+    this.initializeClients();
   }
 
   getConfig(): AIServiceConfig {
@@ -275,7 +338,6 @@ ${questionTypePrompts}
       try {
         result = JSON.parse(jsonStr);
       } catch (parseError) {
-        console.error('JSON parse error. Response:', jsonStr.slice(0, 500));
         throw new AIServiceError(
           `Invalid JSON response from AI. Response preview: ${jsonStr.slice(0, 200)}...`,
           this.config.defaultProviderId
@@ -310,7 +372,6 @@ ${questionTypePrompts}
         concepts: result.concepts || [],
       };
     } catch (error) {
-      console.error('Error generating questions:', error);
       throw AIServiceError.fromAxiosError(this.config.defaultProviderId, error);
     }
   }
@@ -371,7 +432,6 @@ Return ONLY valid JSON.`;
       }
       return JSON.parse(jsonStr);
     } catch (error) {
-      console.error('Error evaluating answer:', error);
       return {
         isCorrect: false,
         score: 0,

@@ -398,7 +398,6 @@ export class DataService {
       const filePath = `${this.dataDir}/settings.json`;
       await this.vault.adapter.write(filePath, JSON.stringify(settings, null, 2));
     } catch (error) {
-      console.error('Error saving settings:', error);
     }
   }
 

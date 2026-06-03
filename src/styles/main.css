@@ -107,12 +107,8 @@
   background: var(--background-secondary);
   border-bottom: 1px solid var(--background-modifier-border);
   overflow-x: auto;
-  scrollbar-width: none;
 }
 
-.sil-mode-selector::-webkit-scrollbar {
-  display: none;
-}
 
 .sil-mode-btn {
   display: flex;
@@ -985,22 +981,7 @@
 }
 
 /* ========== Scrollbar Styling ========== */
-.sil-content::-webkit-scrollbar {
-  width: 8px;
-}
 
-.sil-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sil-content::-webkit-scrollbar-thumb {
-  background-color: var(--background-modifier-border);
-  border-radius: 4px;
-}
-
-.sil-content::-webkit-scrollbar-thumb:hover {
-  background-color: var(--text-muted);
-}
 
 /* ========== Responsive Design ========== */
 @media (max-width: 600px) {
@@ -1619,7 +1600,7 @@
   border-color: var(--sil-accent);
 }
 
-.sil-type-checkbox:has(input:checked) {
+.sil-type-checkbox.is-checked {
   border-color: var(--sil-accent);
   background: rgba(99, 102, 241, 0.1);
 }

@@ -109,7 +109,6 @@ export const AISettingsPanel: React.FC<AISettingsPanelProps> = ({
       const result = await onTestConnection(provider);
       setTestResults(prev => ({ ...prev, [provider]: result }));
     } catch (error) {
-      console.error('Test failed:', error);
       setTestResults(prev => ({ ...prev, [provider]: false }));
     } finally {
       setTestingProvider(null);

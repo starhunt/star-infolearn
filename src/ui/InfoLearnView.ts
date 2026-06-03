@@ -1008,7 +1008,9 @@ export class InfoLearnView extends ItemView {
         }
       });
       checkbox.checked = config.selectedTypes.includes(type.value);
+      label.toggleClass('is-checked', checkbox.checked);
       checkbox.onchange = () => {
+        label.toggleClass('is-checked', checkbox.checked);
         const newTypes = checkbox.checked
           ? [...config.selectedTypes, type.value]
           : config.selectedTypes.filter(t => t !== type.value);
@@ -1139,7 +1141,9 @@ export class InfoLearnView extends ItemView {
         attr: { type: 'checkbox', value: type.value }
       });
       checkbox.checked = config.selectedTypes.includes(type.value);
+      label.toggleClass('is-checked', checkbox.checked);
       checkbox.onchange = () => {
+        label.toggleClass('is-checked', checkbox.checked);
         const newTypes = checkbox.checked
           ? [...config.selectedTypes, type.value]
           : config.selectedTypes.filter(t => t !== type.value);
