@@ -81,7 +81,6 @@ export class DataService {
             const content = await this.vault.adapter.read(file);
             cards.push(JSON.parse(content));
           } catch {
-            console.warn(`Failed to load card from ${file}`);
           }
         }
       }
@@ -174,7 +173,6 @@ export class DataService {
               const content = await this.vault.adapter.read(file);
               logs.push(...JSON.parse(content));
             } catch {
-              console.warn(`Failed to load logs from ${file}`);
             }
           }
         }
@@ -235,7 +233,6 @@ export class DataService {
               const content = await this.vault.adapter.read(file);
               stats.push(JSON.parse(content));
             } catch {
-              console.warn(`Failed to load stats from ${file}`);
             }
           }
         }
@@ -292,7 +289,6 @@ export class DataService {
             const content = await this.vault.adapter.read(file);
             decks.push(JSON.parse(content));
           } catch {
-            console.warn(`Failed to load deck from ${file}`);
           }
         }
       }
@@ -415,7 +411,6 @@ export class DataService {
       const content = await this.vault.adapter.read(filePath);
       return JSON.parse(content);
     } catch (error) {
-      console.warn('No settings found');
       return null;
     }
   }

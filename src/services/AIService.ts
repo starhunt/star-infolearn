@@ -257,7 +257,6 @@ ${questionTypePrompts}
       const response = await this.callAI(prompt);
 
       let jsonStr = response.trim();
-      console.log('AI raw response length:', response.length);
 
       if (!jsonStr) {
         throw new AIServiceError('Empty response from AI', this.config.defaultProviderId);

@@ -163,3 +163,11 @@ MIT License
 ---
 
 **Star InfoLearn** - 노트를 플래시카드로, 학습을 더 효과적으로!
+
+## Privacy and network use
+
+Star InfoLearn sends selected note content only to the AI providers that you configure for quiz and learning-card generation. API keys are stored locally in Obsidian plugin settings. The plugin does not collect telemetry.
+
+## License
+
+MIT License. See [LICENSE](./LICENSE).

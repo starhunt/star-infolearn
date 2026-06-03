@@ -216,7 +216,6 @@ export default class StarInfoLearn extends Plugin {
   questionGeneratorService!: QuestionGeneratorService;
 
   async onload() {
-    console.log('Loading Star InfoLearn plugin...');
 
     await this.loadSettings();
 
@@ -381,7 +380,6 @@ export default class StarInfoLearn extends Plugin {
     await this.dataService.initialize();
     await this.loadCardsIntoStore();
 
-    console.log('Star InfoLearn plugin loaded successfully!');
   }
 
   private initializeServices() {
@@ -401,7 +399,6 @@ export default class StarInfoLearn extends Plugin {
   private async loadCardsIntoStore() {
     try {
       const cards = await this.dataService.loadAllLearningCards();
-      console.log(`Star InfoLearn: Loaded ${cards.length} cards from storage`);
       useAppStore.setState({ learningCards: cards });
 
       const leaves = this.app.workspace.getLeavesOfType(INFOLEARN_VIEW_TYPE);
@@ -417,7 +414,6 @@ export default class StarInfoLearn extends Plugin {
   }
 
   onunload() {
-    console.log('Unloading Star InfoLearn plugin...');
     this.app.workspace.detachLeavesOfType(INFOLEARN_VIEW_TYPE);
   }
 
@@ -426,10 +422,8 @@ export default class StarInfoLearn extends Plugin {
 
     if (rawData && !rawData.settingsVersion) {
       // v1 형식 → v2 마이그레이션
-      console.log('Star InfoLearn: Migrating settings from v1 to v2...');
       this.settings = migrateV1ToV2(rawData as V1Settings);
       await this.saveSettings();
-      console.log('Star InfoLearn: Settings migration complete.');
     } else {
       this.settings = Object.assign({}, DEFAULT_SETTINGS, rawData);
       // 프리셋 제공자가 누락되었으면 복원
