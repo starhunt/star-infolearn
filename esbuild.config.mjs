@@ -1,6 +1,6 @@
 import esbuild from "esbuild";
 import process from "process";
-import builtinModules from "builtin-modules";
+import { builtinModules } from "module";
 import fs from "fs";
 
 const banner =
@@ -11,6 +11,7 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = (process.argv[2] === 'production');
+const builtins = [...builtinModules, ...builtinModules.map((moduleName) => `node:${moduleName}`)];
 
 // Plugin to rename main.css to styles.css (Obsidian convention)
 const renameCSS = {
@@ -44,7 +45,7 @@ const options = {
     '@lezer/common',
     '@lezer/highlight',
     '@lezer/lr',
-    ...builtinModules],
+    ...builtins],
   format: 'cjs',
   target: 'ES2020',
   logLevel: 'info',
